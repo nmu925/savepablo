@@ -1,11 +1,25 @@
-Game/Front End:
+Game:
 
 Single Player Mode: The objective of the game is to help Kanye West raise $53 billion and to save “Pablo”.  
 To collect money, players must click an image of Kanye’s face as quickly as possible.  
 They can they reinvest their money into power-ups and items that can increase their clicking speed and passive income rate. 
 This gametype is based on existing popular games such as http://orteil.dashnet.org/cookieclicker/. 
+Users will attempt to reach the target number in the quickest amount of time and can view a global/friend leaderboard. 
 
-Front-End with Back-End:
-Achievements: Players can earn achievements by completing taks both inside and outside the game. 
+Multi-PLayer Mode: Users can compete against random opponents online or their own friends. Multi-player mode is has a few additional
+features compared to single player mode. Most importantly players can use their money to either buy powerups or send debuffs to 
+their opponents. We plan to keep multi-player limited to 2 people only. 
 
-sike gonna do this later 
+Options:
+Players can choose certain options such as saving the game or managing their friends list.
+
+Back-End:
+
+Guest/Acconts: Each player can register for an account in order to save their progress. Players can opt out and play as a guest,
+however their progress will not be saved.
+
+Achievements: Players can earn achievements by completing taks both inside and outside the game. For example, reaching some 
+threshold of cookies or like a Kanye West tweet or listening to Kanye's music. These achievements can award cookies and bonus
+in game features. 
+
+
