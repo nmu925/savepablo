@@ -53,6 +53,10 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'webapp.urls'
 
+LOGIN_URL = '/savepablo/login'
+
+LOGIN_REDIRECT_URL = '/savepablo/'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
