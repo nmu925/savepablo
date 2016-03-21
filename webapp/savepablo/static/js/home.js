@@ -1,8 +1,6 @@
-var go = 1
 
 
 var g = function() {
-    if (!go) return;
     var t = document.getElementById('money');
     var x = parseInt(t.innerHTML);
     t.innerHTML = x + 1 + "";
