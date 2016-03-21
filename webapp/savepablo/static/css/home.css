@@ -1,8 +1,25 @@
+.hover{
+  height:10%;
+}
+.row {
+  border: 2px solid;
+  border-color: #C0C0C0;
+}
+
 #kanye {
   margin-left: auto;
   margin-right:auto;
   display:block;
 
+}
+.box{
+  max-width:75%;
+  max-height:75%;
+}
+#yeezy{
+  float:bottom;
+  max-width:75%;
+  max-height:75%;
 }
 
 .header{
@@ -11,3 +28,25 @@
   width:5em;
 
 }
+
+.count{
+  float:top;
+  display:block;
+
+}
+/* Hover code form http://codepen.io/nxworld/pen/ZYNOBZ */ 
+.hover figure img{
+  -webkit-transform: scale(1);
+	transform: scale(1);
+	-webkit-transition: .15s ease-in-out;
+	transition: ..15s ease-in-out;
+}
+
+.hover figure:hover img {
+	-webkit-transform: scale(1.1);
+	transform: scale(1.1);
+}
+.text{
+  padding-top: 10px;
+}
+

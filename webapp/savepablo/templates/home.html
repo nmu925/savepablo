@@ -2,13 +2,58 @@
 {% block content %}
 {% load staticfiles %}
 <div class="container-fluid">
-  <div class="row">
+  <div class="row-fluid">
     <div class="col-md-4">
       <h1 class="header"> Store </h1>
+      <div class="hover row">
+        <h3 class="count"> Sell overpriced Yeezys</h3>
+        <figure class="box">
+          <img id="yeezy" src="{% static 'yeezys.jpg' %}"/>
+        </figure>
+        <p class="text"> Owned: 0 Price: 1 </p>
+      </div>
+      <div class="hover row">
+        <h3 class="count"> Convince Kim to lend you money</h3>
+        <figure class="box">
+          <img id="yeezy" src="{% static 'kim k.jpg' %}"/>
+        </figure>
+        <p class="text"> Owned: 0 Price: 10 </p>
+
+      </div>
+     <div class="hover row">
+        <h3 class="count"> Drop an album on Tidal </h3>
+        <figure class="box">
+          <img id="yeezy" src="{% static 'tidal.jpg' %}"/>
+        </figure>
+        <p class="text"> Owned: 0 Price: 100 </p>
+
+      </div>
+      <div class="hover row">
+        <h3 class="count"> Collect money from GoFundMe</h3>
+        <figure class="box">
+          <img id="yeezy" src="{% static 'gofundme.png' %}"/>
+        </figure>
+        <p class="text"> Owned: 0 Price: 1000 </p>
+
+      </div>
+      <div class="hover row">
+        <h3 class="count"> Loan from Mark Z </h3>
+        <figure class="box">
+          <img id="yeezy" src="{% static 'mark z .jpg' %}"/>
+        </figure>
+        <p class="text"> Owned: 0 Price: 10000 </p>
+      </div>
+      <div class="row">
+
+      </div>
     </div>
     <div class="col-md-4">
       <h1 class="header"> $ <span id="money"> 0 </span> </h1>
-        <img id="kanye" src="{% static 'kanye-face.jpg' %}">
+      <div class="hover">
+        <figure>
+          <img id="kanye" src="{% static 'kanye-face.jpg' %}">
+        </figure>
+      </div>
     </div>
     <div class="col-md-4">
       <h1 class="header"> Temp </h1>
