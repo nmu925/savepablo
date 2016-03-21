@@ -11,7 +11,7 @@ class RegistrationForm(forms.Form):
                              label='Password',
                               widget = forms.PasswordInput())
   password2 = forms.CharField(max_length=200,
-                             label='Password',
+                             label='Confirm Password',
                               widget = forms.PasswordInput())
 
   def clean(self):

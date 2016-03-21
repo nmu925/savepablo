@@ -1,7 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import login,authenticate
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from forms import *
+from models import *
+from django.core.urlresolvers import reverse
 # Create your views here.
 
 
@@ -9,7 +12,6 @@ from django.db import transaction
 def home(request):
   return render(request,'home.html',{})
 
-def register(request):
 
 @transaction.atomic
 def register(request):
@@ -28,14 +30,15 @@ def register(request):
   new_user = User.objects.create_user(username=form.cleaned_data['user_name'],
                                      password=form.cleaned_data['password1'],
                                     first_name=form.cleaned_data['first_name'],
-                                   last_name=form.cleaned_data['last_name'],
-                                   email=form.cleaned_data['email'])
-  new_user.is_active = False
+                                   last_name=form.cleaned_data['last_name'])
+
   new_user.save()
-  inst = UserProfile(user_name=form.cleaned_data['user_name'])
-  userP = EditForm(request.POST,instance=inst)
+  inst = MyUser(user = new_user)
     
-  userP.save()
+  inst.save()
+
+  user = authenticate(username=form.cleaned_data['user_name'], 
+                    password=form.cleaned_data['password1'])
+  login(request,user)
   
-   context['email'] = form.cleaned_data['email']
-  return render(request,'confirmEmail.html',context)
+  return redirect(reverse('home'))
