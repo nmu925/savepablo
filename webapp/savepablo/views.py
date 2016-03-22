@@ -6,6 +6,7 @@ from forms import *
 from models import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
+import json
 # Create your views here.
 
 
@@ -46,15 +47,14 @@ def register(request):
 
 @login_required
 def save(request):
-  items = request.POST['items'];
-  kanye = items['kanye'];
-  kim = items['kim'];
-  tidal = items['tidal'];
-  gfm = items['gfm'];
-  mark = items['mark'];
-
+ # items = request.POST['items'];
+ # itemJ = json.loads(items)
+ # for item in itemJ:
+ #   obj = itemJ[item]
+ #   inst = Item(user = request.user,name=obj['name'],mps=obj['mps'],count=['count'])
+ #   inst.save() 
  
-  return HttpResponse('cool',content_type='text/plain');
+  return HttpResponse('success',content_type='text/plain');
 
 
 

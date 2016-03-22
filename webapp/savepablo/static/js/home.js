@@ -1,13 +1,13 @@
 var mps = 1; 
 var yeezy = {name:"yeezy",mps:1,count:0};
 var kim = {name:"kim",mps:10, count:0};
-var tidle = {name:"tidle",mps:100,count:0};
+var tidal = {name:"tidle",mps:100,count:0};
 var gfm = {name:"gfm",mps:1000,count:0};
 var mark = {name:"mark",mps:10000,count:0};
 var dict = {};
 dict['yeezy'] = yeezy; 
 dict['kim'] = kim; 
-dict['tidle'] = tidle; 
+dict['tidal'] = tidal; 
 dict['gfm'] = gfm; 
 dict['mark'] = mark; 
 
@@ -40,7 +40,6 @@ function updateMoney(num){
 } 
 
 
-
 $(document).ready(function(){
   /* Handles logic when you click Kanye */ 
   $("#kanye").click(function() {
@@ -62,6 +61,7 @@ $(document).ready(function(){
     var currentPrice = parseInt(pC.innerHTML);
     if(currentPrice < currentMoney){
       updateMPS(obj.mps);
+      obj.count++;
       updateMoney(currentMoney - currentPrice);
       oC.innerHTML = parseInt(oC.innerHTML) + 1;
       pC.innerHTML = (parseInt(pC.innerHTML) * 1.5).toFixed(1);
