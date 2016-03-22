@@ -5,6 +5,7 @@ from django.db import transaction
 from forms import *
 from models import *
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse, Http404
 # Create your views here.
 
 
@@ -42,3 +43,18 @@ def register(request):
   login(request,user)
   
   return redirect(reverse('home'))
+
+@login_required
+def save(request):
+  items = request.POST['items'];
+  kanye = items['kanye'];
+  kim = items['kim'];
+  tidal = items['tidal'];
+  gfm = items['gfm'];
+  mark = items['mark'];
+
+ 
+  return HttpResponse('cool',content_type='text/plain');
+
+
+
