@@ -24,25 +24,35 @@ function updateMPS(num){
   mps += num; 
   t.innerHTML = mps + "";
 }
+function updateMoney(num){
+  var t = document.getElementById('money');
+  t.innerHTML = num + "";
+} 
+
 
 $(document).ready(function(){
   $("#kanye").click(function() {
     g(); 
   });
-  $('.hover').click(function(event){
+  $('.img').not('#kanye').click(function(event){
     console.log("testing\n");
     var hoverElem = event.target;
     var obj = dict[hoverElem.id];
-    updateMPS(obj.mps);
     console.log(hoverElem.id + '\n');
     var par = hoverElem.parentNode.parentNode;
     console.log(par.className + '\n');
     var p = par.querySelector(".text");
     console.log(p.className + '\n');
+    var currentMoney = parseInt(document.getElementById('money').innerHTML);
     var oC = p.querySelector("#owned");
     var pC = p.querySelector("#price");
-    oC.innerHTML = parseInt(oC.innerHTML) + 1;
-    pC.innerHTML = (parseInt(pC.innerHTML) * 1.5).toFixed(1);
+    var currentPrice = parseInt(pC.innerHTML);
+    if(currentPrice < currentMoney){
+      updateMPS(obj.mps);
+      updateMoney(currentMoney - currentPrice);
+      oC.innerHTML = parseInt(oC.innerHTML) + 1;
+      pC.innerHTML = (parseInt(pC.innerHTML) * 1.5).toFixed(1);
+    }
     
     
   });
