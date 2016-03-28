@@ -23,7 +23,10 @@ urlpatterns = [
     url(r'^login$',auth_views.login,{'template_name':'login.html'},name='login'),
     url(r'^logout$',auth_views.logout_then_login,name='logout'),
     url(r'^register$',views.register,name='register'),
-    url(r'^save$',views.save,name='save'),
+    url(r'^click$',views.click,name='click'),
+    url(r'^bought$', views.bought,name='bought'),
+    url(r'load$',views.load,name='load'),
+    url(r'step$', views.step, name='step'),
     url(r'^$', views.home, name = 'home')
 
 ]

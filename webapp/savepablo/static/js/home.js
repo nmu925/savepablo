@@ -1,18 +1,3 @@
-var mps = 1; 
-var yeezy = {name:"yeezy",mps:1,count:0};
-var kim = {name:"kim",mps:10, count:0};
-var tidal = {name:"tidle",mps:100,count:0};
-var gfm = {name:"gfm",mps:1000,count:0};
-var mark = {name:"mark",mps:10000,count:0};
-var dict = {};
-dict['yeezy'] = yeezy; 
-dict['kim'] = kim; 
-dict['tidal'] = tidal; 
-dict['gfm'] = gfm; 
-dict['mark'] = mark; 
-
-
-
 function getCSRFToken() {
     var cookies = document.cookie.split(";");
     for (var i = 0; i < cookies.length; i++) {
@@ -23,82 +8,138 @@ function getCSRFToken() {
     return "unknown";
 }
 
-var g = function() {
-    var t = document.getElementById('money');
-    var x = parseInt(t.innerHTML);
-    t.innerHTML = x + mps + "";
-}
-
 function updateMPS(num){
-  var t = document.getElementById('mps');
-  mps += num; 
-  t.innerHTML = mps + "";
+  var t = document.getElementById('mps'); 
+  t.innerHTML = num;
 }
 function updateMoney(num){
   var t = document.getElementById('money');
-  t.innerHTML = num + "";
+  t.innerHTML = num;
 } 
 
+//Updates count,cost elements of an image elem
+function updateView(elem,count,cost){
+  //Get corresponding fields
+  var par = elem.parentNode.parentNode;
+  var p = par.querySelector(".text");
+  var oC = p.querySelector("#owned");
+  var pC = p.querySelector("#price");
+  //update final values shown 
+  oC.innerHTML = count;
+  pC.innerHTML = cost;
+
+}
+//Sends ajax request to server, to update money every second
+function updateGame(){
+    $.ajax({
+    url: "/savepablo/step",
+
+    data:{csrfmiddlewaretoken: getCSRFToken()},
+
+    type: "POST",
+    datatype:"json",
+
+    success:function(state){
+        updateMoney(state['money']);
+     }
+
+    })
+}
 
 $(document).ready(function(){
-  /* Handles logic when you click Kanye */ 
-  $("#kanye").click(function() {
-    g(); 
-  });
-  /* Handles logic when items is bought*/
-  $('.img').not('#kanye').click(function(event){
-    console.log("testing\n");
-    var hoverElem = event.target;
-    var obj = dict[hoverElem.id];
-    console.log(hoverElem.id + '\n');
-    var par = hoverElem.parentNode.parentNode;
-    console.log(par.className + '\n');
-    var p = par.querySelector(".text");
-    console.log(p.className + '\n');
-    var currentMoney = parseInt(document.getElementById('money').innerHTML);
-    var oC = p.querySelector("#owned");
-    var pC = p.querySelector("#price");
-    var currentPrice = parseInt(pC.innerHTML);
-    if(currentPrice < currentMoney){
-      updateMPS(obj.mps);
-      obj.count++;
-      updateMoney(currentMoney - currentPrice);
-      oC.innerHTML = parseInt(oC.innerHTML) + 1;
-      pC.innerHTML = (parseInt(pC.innerHTML) * 1.5).toFixed(1);
-    }
-
-  });
-});
-
-window.onload = function(){ 
-  /* Sends ajax request to save game */
-  var save = document.getElementById('save');
-  save.onclick = function(){
-  console.log('clicked\n');
-  var dictJ = JSON.stringify(dict);
   
+  //Load the game state from server
   $.ajax({
-    url: "/savepablo/save",
-    
-    data:{csrfmiddlewaretoken: getCSRFToken(), 
-          items : dictJ},
-    type: "POST",
-    datatype:"json", 
+    url: "/savepablo/load",
 
-    success: function(json){
-      console.log('success\n');
-      var success = document.getElementsByClassName('alertsuccess')[0];
-      var newE = document.createElement('div');
-      newE.className = 'alert alert-success';
-      newE.innerHTML = "<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a><strong>Success saving!</strong>";
-      success.appendChild(newE);
-      
+    data:{csrfmiddlewaretoken: getCSRFToken()},
+
+    type: "POST",
+    datatype:"json",
+
+    success:function(state){
+      console.log(state);
+      for(var i = 0; i < state.length; i++){
+        var obj = state[i];
+        var type = obj['model']
+        if(type == 'savepablo.item'){
+          var fields = obj['fields'];
+          var id = fields['name'];
+          var count = fields['count'];
+          var cost = fields['cost'];
+          var elem = document.getElementById(id);
+          updateView(elem,count,cost);
+        }
+        if(type == 'savepablo.myuser'){
+          var fields = obj['fields'];
+          var money = fields['points'];
+          var mps = fields['mps'];
+          updateMoney(money);
+          updateMPS(mps);
+        }
+      }
+    }
+  })  
+
+
+  /* Sends request to server, which takes care of game logic when clicking
+   * on Kanye */ 
+  $("#kanye").click(function() {
+    $.ajax({
+    url: "/savepablo/click",
+    
+    data:{csrfmiddlewaretoken: getCSRFToken()},
+    type: "POST",
+    datatype:"text/plain", 
+
+    success: function(money){
+      updateMoney(money);
     }
          
   })
-  return false;
-  }
+  });
 
-}
+  /* Handles logic when items is bought*/
+  $('.img').not('#kanye').click(function(event){
 
-setInterval(g,1000)
+    console.log("testing\n");
+    var hoverElem = event.target;
+    var id = hoverElem.id;
+
+    $.ajax({
+      url: "/savepablo/bought",
+      
+      data:{csrfmiddlewaretoken: getCSRFToken(),
+            id : id},
+      type: "POST",
+      datatype:"json", 
+
+      success: function(data){
+        // Not enough money to buy
+        if(data.length == 0){
+          console.log('not enough money')
+        }
+        //Update frontend to match server data
+        else{
+          console.log(data);
+          //Parse data from json
+          var count = data['count'];
+          var cost = data['cost'];
+          var mps = data['mps'];
+          console.log(mps);
+          var money = data['money'];
+          //find correct element to modify 
+          var hoverElem = event.target;
+          //update final values shown 
+          updateMPS(mps);
+          updateMoney(money);
+          updateView(hoverElem,count,cost)
+
+        }
+      }
+    })
+  });
+});
+
+
+setInterval(updateGame,1000)
