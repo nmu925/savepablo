@@ -7,7 +7,8 @@ function getCSRFToken() {
     }
     return "unknown";
 }
-
+var target = document.getElementById('foo')
+var spinner = new Spinner(opts).spin(target);
 function updateMPS(num){
   var t = document.getElementById('mps'); 
   t.innerHTML = num;

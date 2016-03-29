@@ -1,7 +1,17 @@
 {% extends 'navbar.html' %}
-{% block content %}
+{% block head %}
 
+{% load staticfiles %}
+<script src="{% static 'js/mHome.js' %}"></script>
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+
+{% endblock %}
+{% block content %}
+<div id="spinner">
+  
+</div>
 <button id='game' class="btn btn-primary">Find Game</button>
 <button id='invite' class="btn btn-success">Invite Friend</button>
+
 
 {% endblock%}

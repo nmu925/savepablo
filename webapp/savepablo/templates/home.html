@@ -1,4 +1,12 @@
 {% extends 'navbar.html' %}
+{% block head %}
+
+
+{% load staticfiles %}
+<script src="{% static 'js/home.js' %}"></script>
+
+
+{% endblock %}
 {% block content %}
 {% load staticfiles %}
 <div class="container-fluid">
