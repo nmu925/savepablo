@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^bought$', views.bought,name='bought'),
     url(r'load$',views.load,name='load'),
     url(r'step$', views.step, name='step'),
+    url(r'mHome$',views.mHome,name='mHome'),
     url(r'^$', views.home, name = 'home')
 
 ]

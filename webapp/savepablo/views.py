@@ -164,7 +164,10 @@ def step(request):
   data = {}
   data['money'] = str(user.points)
   return HttpResponse(json.dumps(data),content_type='application/json')
-
+#returns to multiplayer home
+@login_required
+def mHome(request):
+  return render(request,'mHome.html',{})
 
 
 
