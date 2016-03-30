@@ -68,6 +68,19 @@ def click(request):
   #json = serializers.serialize('json',user.points)
   return HttpResponse(points,content_type='text/plain')
 
+@login_required
+def mclick(request):
+  user = MyUser.objects.get(user=request.user)
+  points = user.mPoints + user.mMps
+  
+  user.mPoints = points
+  user.save()
+
+  #json = serializers.serialize('json',user.points)
+  return HttpResponse(points,content_type='text/plain')
+
+
+
 #Defines the mps for each item
 def getMPS(item):
   if(item == 'yeezy'):
@@ -151,6 +164,65 @@ def bought(request):
     jsonD = json.dumps(data)
     return HttpResponse(jsonD,content_type='application/json')
 
+
+@login_required
+def mbought(request):
+  user = MyUser.objects.get(user=request.user)
+  id = request.POST['id']
+  data = {}
+  if(not(id == 'yeezy' or id == 'kim' or id =='tidal' or id =='gfm' or id =='mark')):
+    #Invalid items bought, return bad request
+    return HttpResponseBadRequest()
+  
+
+  #Fetch item, update count 
+  try:
+    #update item
+    owned = mItem.objects.get(user=request.user,name=id)
+    #check if item can be bought
+    if(not(owned.cost <= user.points)):
+      return HttpResponse()
+
+    owned.count += 1
+    ogCost = owned.cost
+    owned.cost = owned.cost * Decimal(1.5) 
+    owned.save()
+    #update user mps
+    user.mPoints = user.mPoints - ogCost
+    user.mMps += owned.mps
+    user.save()
+    #send data back to client
+    data['id'] = str(id)
+    data['mps'] = str(user.mMps)
+    data['cost'] = str(owned.cost)
+    data['money'] = str(user.mPoints)
+    data['count'] = str(owned.count)
+    jsonD = json.dumps(data)
+    return HttpResponse(jsonD,content_type='application/json')
+
+  except ObjectDoesNotExist:
+    #create new item
+    mpsNew = getMPS(id)
+    ogCost = getCost(id)
+    costNew = ogCost * 1.5
+    #check if item can be bought
+    if not(costNew <= user.mPoints):
+      return HttpResponse()
+    new = mItem(name=id,mps=mpsNew,count=1,cost=costNew,user=request.user)
+    new.save()
+    #update user mps/points
+    user.mPoints = user.mPoints - ogCost
+    user.mMps += new.mps
+    user.save() 
+    #send data back to client
+    data['id'] = str(id)
+    data['mps'] = str(mpsNew)
+    data['cost'] = str(costNew)
+    data['money'] = str(user.mPoints)
+    data['count'] = '1'
+    jsonD = json.dumps(data)
+    return HttpResponse(jsonD,content_type='application/json')
+
 @login_required
 def load(request):
     #Send user and corresponding items too client to load initial state
@@ -162,7 +234,7 @@ def load(request):
     return HttpResponse(jsonD,content_type='application/json')
 
 
-#increments points by mps
+#increments points by mps for single player
 @login_required
 def step(request):
   user = MyUser.objects.get(user=request.user)
@@ -171,6 +243,19 @@ def step(request):
   data = {}
   data['money'] = str(user.points)
   return HttpResponse(json.dumps(data),content_type='application/json')
+
+#increments points by mps for multi-player
+@login_required
+def mstep(request):
+  user = MyUser.objects.get(user=request.user)
+  user.mPoints += user.mMps
+  user.save()
+  data = {}
+  data['money'] = str(user.points)
+  return HttpResponse(json.dumps(data),content_type='application/json')
+
+
+
 #returns to multiplayer home
 @login_required
 def mHome(request):
@@ -212,9 +297,21 @@ def ready(request):
     return HttpResponse()
   return HttpResponseBadRequest()
 
+
+#Initialize game with players
 @login_required
 def game(request):
+    user = MyUser.objects.get(user=request.user)
+    opp = user.opponent
+    game = Game(p1=user,p2=opp)
+    game.save()
     return render(request,'game.html',{})
 
-   
+
+@login_required
+def getopp(request):
+  user = MyUser.objects.get(user=request.user)
+  opp = user.opp
+  data = serializers.serialize('json',data)
+  return HttpResponse(data,content_type='application/json')
 

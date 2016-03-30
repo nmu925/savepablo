@@ -10,7 +10,11 @@ class MyUser(models.Model):
   mps = models.DecimalField(max_digits=100,decimal_places=1,default=1)
   queued = models.BooleanField(default=0)
   opponent = models.OneToOneField("self",null=True,blank=True,default=None)
-  ready = models.BooleanField(default=0) 
+  ready = models.BooleanField(default=0)
+  mPoints = models.DecimalField(max_digits=11,decimal_places=0, default=0)
+  mMps = models.DecimalField(max_digits=100,decimal_places=1,default=1)
+
+
 
   #queued by default returns an integer value, easier to convert to a bool 
   def is_queued(self):
@@ -51,7 +55,8 @@ class mItem(models.Model):
 
 
 class Game(models.Model):
-  p1 = models.OneToOneField(User,related_name='+')
-  p2 = models.OneToOneField(User,related_name='+')
+  p1 = models.OneToOneField(MyUser,related_name='+')
+  p2 = models.OneToOneField(MyUser,related_name='+')
+
 
 

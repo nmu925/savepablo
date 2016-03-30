@@ -24,13 +24,18 @@ urlpatterns = [
     url(r'^logout$',auth_views.logout_then_login,name='logout'),
     url(r'^register$',views.register,name='register'),
     url(r'^click$',views.click,name='click'),
+    url(r'^mclick$',views.mclick,name='mclick'),
     url(r'^bought$', views.bought,name='bought'),
+    url(r'^mbought$', views.mbought,name='mbought'),
     url(r'^load$',views.load,name='load'),
     url(r'^step$', views.step, name='step'),
+    url(r'^mstep$', views.mstep, name='mstep'),
     url(r'^mHome$',views.mHome,name='mHome'),
     url(r'^queue$', views.queue,name='queue'),
     url(r'^ready$',views.ready,name='ready'),
-    url(r'^game$',views.game,name='game'), 
+    url(r'^game$',views.game,name='game'),
+    url(r'^getopp$',views.getopp,name='getopp'),
+
     url(r'^$', views.home, name = 'home')
 
 ]

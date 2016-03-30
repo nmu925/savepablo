@@ -7,8 +7,6 @@ function getCSRFToken() {
     }
     return "unknown";
 }
-//function startGame(){
-//}
 
 function sendReadyBegin(){
     $.ajax({
