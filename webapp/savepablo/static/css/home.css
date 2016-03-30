@@ -50,3 +50,7 @@ figure img{
   padding-top: 10px;
 }
 
+#store {
+  overflow-y: scroll;
+  height:100vh;
+}
