@@ -51,7 +51,7 @@ class mItem(models.Model):
 
 
 class Game(models.Model):
-  p1 = models.OneToOneField(User)
-  p2 = models.OneToOneField(User)
+  p1 = models.OneToOneField(User,related_name='+')
+  p2 = models.OneToOneField(User,related_name='+')
 
 
