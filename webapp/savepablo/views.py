@@ -302,7 +302,9 @@ def ready(request):
 @login_required
 def game(request):
     user = MyUser.objects.get(user=request.user)
-    opp = user.opponent
+    #opp = user.opponent
+    temp_opp = User.objects.get(username='test0')
+    opp = MyUser.objects.get(user=temp_opp)
     game = Game(p1=user,p2=opp)
     game.save()
     return render(request,'game.html',{})
@@ -314,7 +316,3 @@ def getopp(request):
   opp = user.opp
   data = serializers.serialize('json',data)
   return HttpResponse(data,content_type='application/json')
-
-@login_required
-def multiplayer(request):
-  return render(request,'multiplayer.html',{})

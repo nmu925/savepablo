@@ -35,5 +35,4 @@ urlpatterns = [
     url(r'^game$',views.game,name='game'),
     url(r'^getopp$',views.getopp,name='getopp'),
     url(r'^$', views.home, name = 'home')
-    url(r'^multiplayer$', views.multiplayer, name='multiplayer'),
 ]

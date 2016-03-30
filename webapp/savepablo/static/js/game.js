@@ -28,7 +28,6 @@ function updateView(elem,count,cost){
   //update final values shown 
   oC.innerHTML = count;
   pC.innerHTML = cost;
-
 }
 
 //Sends ajax request to server, to update money every second
