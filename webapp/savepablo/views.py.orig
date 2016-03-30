@@ -306,6 +306,7 @@ def game(request):
     game = Game(p1=user,p2=opp)
     game.save()
     return render(request,'game.html',{})
+<<<<<<< HEAD
 
 
 @login_required
@@ -315,3 +316,5 @@ def getopp(request):
   data = serializers.serialize('json',data)
   return HttpResponse(data,content_type='application/json')
 
+=======
+>>>>>>> 9264f88be818b043a24213c1f8f9d721f41c9c20
