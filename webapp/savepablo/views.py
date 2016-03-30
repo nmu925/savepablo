@@ -215,6 +215,3 @@ def ready(request):
 @login_required
 def game(request):
     return render(request,'game.html',{})
-
-   
-
