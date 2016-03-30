@@ -69,5 +69,4 @@ $(document).ready(function(){
     //Find game
     pingServer();
     });
-
 });

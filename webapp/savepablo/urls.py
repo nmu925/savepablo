@@ -18,8 +18,7 @@ from django.contrib.auth import views as auth_views
 from savepablo import views
 
 
-urlpatterns = [
-    
+urlpatterns = [ 
     url(r'^login$',auth_views.login,{'template_name':'login.html'},name='login'),
     url(r'^logout$',auth_views.logout_then_login,name='logout'),
     url(r'^register$',views.register,name='register'),
@@ -31,6 +30,6 @@ urlpatterns = [
     url(r'^queue$', views.queue,name='queue'),
     url(r'^ready$',views.ready,name='ready'),
     url(r'^game$',views.game,name='game'), 
-    url(r'^$', views.home, name = 'home')
-
+    url(r'^$', views.home, name = 'home'),
+    url(r'^multiplayer$', views.multiplayer, name='multiplayer'),
 ]
