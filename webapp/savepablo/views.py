@@ -7,16 +7,23 @@ from models import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, Http404
 import json
-
+from django.http import HttpResponseBadRequest
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from decimal import * 
 from django.shortcuts import get_object_or_404
+from django.db import transaction
 # Create your views here.
 
 
 @login_required
 def home(request):
+  #Set opponent to null
+  #Used as a soft reset in case the opponent is not reset at end of multiplayer game
+  user = MyUser.objects.get(user=request.user)
+  user.opponent = None
+  user.queued = False
+  user.save()
   return render(request,'home.html',{})
 
 
@@ -169,5 +176,45 @@ def step(request):
 def mHome(request):
   return render(request,'mHome.html',{})
 
+@login_required
+@transaction.atomic
+def queue(request):
 
+  user = MyUser.objects.get(user=request.user)
+  if(not user.is_queued()):
+    user.queued = True
+    user.save()
+
+  #Has existing opponenet
+  if(not user.opponent == None):
+    return HttpResponse('Found opponenent')
+  set = MyUser.objects.filter(queued=True).exclude(user=request.user)
+  count = set.count() 
+  if(count == 0):
+    return HttpResponseBadRequest()
+
+  rando = set[0]
+  rando.opponent = user
+  user.opponent = rando
+  rando.save()
+  user.save()
+  return HttpResponse('Found opponenent')
+
+@transaction.atomic
+@login_required
+def ready(request):
+  user = MyUser.objects.get(user=request.user)
+  user.ready = True
+  user.queued = False
+  user.save()
+  opp = user.opponent
+  if(opp.is_ready()):
+    return HttpResponse()
+  return HttpResponseBadRequest()
+
+@login_required
+def game(request):
+    return render(request,'game.html',{})
+
+   
 

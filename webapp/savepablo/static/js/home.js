@@ -7,8 +7,6 @@ function getCSRFToken() {
     }
     return "unknown";
 }
-var target = document.getElementById('foo')
-var spinner = new Spinner(opts).spin(target);
 function updateMPS(num){
   var t = document.getElementById('mps'); 
   t.innerHTML = num;
@@ -55,11 +53,10 @@ $(document).ready(function(){
 
     data:{csrfmiddlewaretoken: getCSRFToken()},
 
-    type: "POST",
+    type: "GET",
     datatype:"json",
 
     success:function(state){
-      console.log(state);
       for(var i = 0; i < state.length; i++){
         var obj = state[i];
         var type = obj['model']
@@ -103,7 +100,6 @@ $(document).ready(function(){
   /* Handles logic when items is bought*/
   $('.img').not('#kanye').click(function(event){
 
-    console.log("testing\n");
     var hoverElem = event.target;
     var id = hoverElem.id;
 
@@ -122,12 +118,10 @@ $(document).ready(function(){
         }
         //Update frontend to match server data
         else{
-          console.log(data);
           //Parse data from json
           var count = data['count'];
           var cost = data['cost'];
           var mps = data['mps'];
-          console.log(mps);
           var money = data['money'];
           //find correct element to modify 
           var hoverElem = event.target;

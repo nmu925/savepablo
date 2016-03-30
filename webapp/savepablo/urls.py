@@ -25,9 +25,12 @@ urlpatterns = [
     url(r'^register$',views.register,name='register'),
     url(r'^click$',views.click,name='click'),
     url(r'^bought$', views.bought,name='bought'),
-    url(r'load$',views.load,name='load'),
-    url(r'step$', views.step, name='step'),
-    url(r'mHome$',views.mHome,name='mHome'),
+    url(r'^load$',views.load,name='load'),
+    url(r'^step$', views.step, name='step'),
+    url(r'^mHome$',views.mHome,name='mHome'),
+    url(r'^queue$', views.queue,name='queue'),
+    url(r'^ready$',views.ready,name='ready'),
+    url(r'^game$',views.game,name='game'), 
     url(r'^$', views.home, name = 'home')
 
 ]
