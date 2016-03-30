@@ -305,6 +305,9 @@ def game(request):
     #opp = user.opponent
     temp_opp = User.objects.get(username='test0')
     opp = MyUser.objects.get(user=temp_opp)
+    game = Game.objects.get(p1=user,p2=opp)
+    if(not game == None):
+      game.delete()
     game = Game(p1=user,p2=opp)
     game.save()
     return render(request,'game.html',{})
