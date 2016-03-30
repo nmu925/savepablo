@@ -47,7 +47,22 @@ function updateGame(){
 
     })
 }
+function getOpp(){
+    $.ajax({
+    url: "/savepablo/getopp",
 
+    data:{csrfmiddlewaretoken: getCSRFToken()},
+
+    type: "GET",
+    datatype:"json",
+
+    success:function(state){
+        //updateMoney(state['money']);
+     }
+
+    })
+
+}
 $(document).ready(function(){
   
 
@@ -75,7 +90,7 @@ $(document).ready(function(){
     var id = hoverElem.id;
 
     $.ajax({
-      url: "/savepablo/bought",
+      url: "/savepablo/mbought",
       
       data:{csrfmiddlewaretoken: getCSRFToken(),
             id : id},
@@ -106,3 +121,6 @@ $(document).ready(function(){
     })
   });
 });
+
+setInterval(updateGame,1000)
+setInterval(getOpp,1000)
