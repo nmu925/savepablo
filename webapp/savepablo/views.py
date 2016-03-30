@@ -315,3 +315,6 @@ def getopp(request):
   data = serializers.serialize('json',data)
   return HttpResponse(data,content_type='application/json')
 
+@login_required
+def multiplayer(request):
+  return render(request,'multiplayer.html',{})
