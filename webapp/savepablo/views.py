@@ -216,7 +216,7 @@ def mbought(request):
     user.save() 
     #send data back to client
     data['id'] = str(id)
-    data['mps'] = str(mpsNew)
+    data['mps'] = str(user.mMps)
     data['cost'] = str(costNew)
     data['money'] = str(user.mPoints)
     data['count'] = '1'
@@ -251,7 +251,7 @@ def mstep(request):
   user.mPoints += user.mMps
   user.save()
   data = {}
-  data['money'] = str(user.points)
+  data['money'] = str(user.mPoints)
   return HttpResponse(json.dumps(data),content_type='application/json')
 
 
@@ -302,20 +302,21 @@ def ready(request):
 @login_required
 def game(request):
     user = MyUser.objects.get(user=request.user)
-    #opp = user.opponent
-    temp_opp = User.objects.get(username='test0')
-    opp = MyUser.objects.get(user=temp_opp)
-    game = Game.objects.get(p1=user,p2=opp)
-    if(not game == None):
-      game.delete()
-    game = Game(p1=user,p2=opp)
-    game.save()
+    opp = user.opponent
+    #temp_opp = User.objects.get(username='test0')
+    #opp = MyUser.objects.get(user=temp_opp)
+    count = Game.objects.filter(p1=user,p2=opp).count()
+    if(count == 0):
+      game = Game(p1=user,p2=opp)
+      game.save()
+
     return render(request,'game.html',{})
 
 
 @login_required
 def getopp(request):
   user = MyUser.objects.get(user=request.user)
-  opp = user.opp
-  data = serializers.serialize('json',data)
+  opp = user.opponent
+  qset = list(MyUser.objects.filter(user = opp.user))
+  data = serializers.serialize('json',qset)
   return HttpResponse(data,content_type='application/json')

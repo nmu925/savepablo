@@ -18,6 +18,16 @@ function updateMoney(num){
   t.innerHTML = num;
 } 
 
+function set_oMps(num){
+  var t = document.getElementById('oMps'); 
+  t.innerHTML = num;
+}
+function set_oMoney(num){
+  var t = document.getElementById('oMoney');
+  t.innerHTML = num;
+} 
+
+
 //Updates count,cost elements of an image elem
 function updateView(elem,count,cost){
   //Get corresponding fields
@@ -28,6 +38,7 @@ function updateView(elem,count,cost){
   //update final values shown 
   oC.innerHTML = count;
   pC.innerHTML = cost;
+
 }
 
 //Sends ajax request to server, to update money every second
@@ -56,7 +67,13 @@ function getOpp(){
     datatype:"json",
 
     success:function(state){
-        //updateMoney(state['money']);
+        console.log('got opponent:\n' );
+        console.log(JSON.stringify(state));
+        fields = state[0]['fields']
+        money = fields['mPoints']
+        mps = fields['mMps']
+        set_oMps(mps)
+        set_oMoney(money)
      }
 
     })
@@ -120,6 +137,6 @@ $(document).ready(function(){
     })
   });
 });
-
+//Temporary interval times for now, may need to decrease time
 setInterval(updateGame,1000)
 setInterval(getOpp,1000)
