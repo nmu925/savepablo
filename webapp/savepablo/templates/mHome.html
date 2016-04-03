@@ -2,15 +2,24 @@
 {% block head %}
 
 {% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href={% static 'css/mHome.css' %}>
 <script src="{% static 'js/mHome.js' %}"></script>
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
 
 {% endblock %}
 {% block content %}
-<div id="spinner">
-  
-</div>
-<button id='game' class="btn btn-primary">Find Game</button>
-<a id='invite' href="{% url 'game' %}" class="btn btn-success">Invite Friend</a>
 
+<div class="outer"> 
+  <div class="middle">
+    <div class="center">
+      Hello
+    <div id="spinner"> </div>
+    <div class="buttons"><button id='game' class="btn btn-primary btn-lg">Find Game</button></div>
+    <div class="buttons">
+    <a id='invite' href="{% url 'game' %}" class="btn btn-success btn-lg">Invite Friend</a>
+    </div>
+  </div>
+  </div>
+</div>
 {% endblock %} 
