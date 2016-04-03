@@ -320,3 +320,11 @@ def getopp(request):
   qset = list(MyUser.objects.filter(user = opp.user))
   data = serializers.serialize('json',qset)
   return HttpResponse(data,content_type='application/json')
+
+@login_required
+def cancel(request):
+  user = MyUser.objects.get(user=request.user)
+  user.queued = False
+  user.ready = False
+  user.save()
+  return HttpResponse()
