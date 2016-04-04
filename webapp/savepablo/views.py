@@ -328,3 +328,7 @@ def cancel(request):
   user.ready = False
   user.save()
   return HttpResponse()
+
+@login_required
+def invite(request):
+  return HttpResponse()
