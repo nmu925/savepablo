@@ -13,6 +13,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from decimal import * 
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+
+
+# Used to generate a one-time-use token to 
+from django.contrib.auth.tokens import default_token_generator
 # Create your views here.
 
 
@@ -330,5 +334,19 @@ def cancel(request):
   return HttpResponse()
 
 @login_required
-def invite(request):
-  return HttpResponse()
+def link(request):
+  
+  # Generate a one-time use token for creating html
+  token = default_token_generator.make_token(request.user)
+  link = """ http://%s%s
+      """ % (request.get_host(), 
+            reverse('invite', args=[token]))
+  return HttpResponse(link)
+
+@login_required
+def invite(request,token):
+
+  if not default_token_generator.check_token(token):
+    raise Http404
+  
+  return HttpResponse(token)

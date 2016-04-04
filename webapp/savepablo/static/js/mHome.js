@@ -85,7 +85,7 @@ $(document).ready(function(){
 
   $('#invite').click(function(event){
    $.ajax({
-    url: "/savepablo/invite",
+    url: "/savepablo/link",
 
     data:{csrfmiddlewaretoken: getCSRFToken()},
 
@@ -93,12 +93,16 @@ $(document).ready(function(){
     datatype:"text/plain",
 
     success:function(state){
-      $('#game').hide()
-      $('#invite').hide()
-      $('#cancel').show()
-      $('#spinner').show()
-      $('#wait').show()
-      $('#search').hide()
+      $('#game').hide();
+      $('#invite').hide();
+      $('#cancel').show();
+      $('#spinner').show();
+      $('#wait').show();
+      $('#search').hide();
+      console.log(state);
+      var p = document.createElement('p');
+      p.innerHTML = 'Share this link with a friend!:' + state
+      $('.center').append(p);
      },
     })
   });
