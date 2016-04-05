@@ -54,13 +54,39 @@ function pingServer(){
         //We recieve an error if we cannot find a match
         //We can simply call the function again until we get a success
         console.log('no match\n');   
-        setTimeout(pingServer,3000);
+        setTimeout(pingServer,1500);
         
       }
 
       })
     }
 }
+
+function pingServer2(){
+    if(keepSearching){
+      $.ajax({
+      url: "/savepablo/wait_accept",
+
+
+      type: "GET",
+      datatype:"text/plain",
+
+      success:function(state){
+       window.location.href = "/savepablo/launch"; 
+       },
+
+      error:function(state){
+        //We recieve an error if we cannot find a match
+        //We can simply call the function again until we get a success
+        console.log('not accepted\n');   
+        setTimeout(pingServer2,500);
+        
+      }
+
+      })
+    }
+}
+
 
 $(document).ready(function(){
   $('#cancel').click(function(event){
@@ -78,12 +104,35 @@ $(document).ready(function(){
       $('#invite').show()
       $('#cancel').hide()
       $('#spinner').hide()
+      $('#share').hide()
+      $('#link').hide()
+     },
+    })
+  });
+  $('#cancel2').click(function(event){
+    $.ajax({
+    url: "/savepablo/cancel2",
 
+    data:{csrfmiddlewaretoken: getCSRFToken()},
+
+    type: "POST",
+    datatype:"text/plain",
+
+    success:function(state){
+      keepSearching = false; 
+      $('#game').show()
+      $('#invite').show()
+      $('#cancel2').hide()
+      $('#spinner').hide()
+      $('#share').hide()
+      $('#link').hide()
      },
     })
   });
 
+
   $('#invite').click(function(event){
+   keepSearching = true; 
    $.ajax({
     url: "/savepablo/link",
 
@@ -95,16 +144,17 @@ $(document).ready(function(){
     success:function(state){
       $('#game').hide();
       $('#invite').hide();
-      $('#cancel').show();
+      $('#cancel2').show();
       $('#spinner').show();
       $('#wait').show();
       $('#search').hide();
-      console.log(state);
-      var p = document.createElement('p');
-      p.innerHTML = 'Share this link with a friend!:' + state
-      $('.center').append(p);
+      $('#share').show();
+      $('#link').show();
+      $('#link').html(state);
+      pingServer2();
      },
     })
+    //Wait for accept
   });
 
   $('#game').click(function(event){

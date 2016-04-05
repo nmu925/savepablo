@@ -61,8 +61,6 @@ function getOpp(){
     $.ajax({
     url: "/savepablo/getopp",
 
-    data:{csrfmiddlewaretoken: getCSRFToken()},
-
     type: "GET",
     datatype:"json",
 

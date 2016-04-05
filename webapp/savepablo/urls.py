@@ -33,9 +33,12 @@ urlpatterns = [
     url(r'^queue$', views.queue,name='queue'),
     url(r'^ready$',views.ready,name='ready'),
     url(r'^game$',views.game,name='game'),
+    url(r'^launch$',views.launch,name='launch'),
     url(r'^getopp$',views.getopp,name='getopp'),
     url(r'^cancel$',views.cancel,name='cancel'),
-    url(r'^invite/(?P<token>[a-z0-9\-]+)$',views.invite,name='invite'),
+    url(r'^cancel2$',views.cancel2,name='cancel2'),
+    url(r'^invite/(?P<id>[a-z0-9\-]+)$',views.invite,name='invite'),
     url(r'^link$',views.link,name='link'),
+    url(r'^wait_accept$',views.waitAccept,name='waitAccept'),
     url(r'^$', views.home, name = 'home')
 ]
