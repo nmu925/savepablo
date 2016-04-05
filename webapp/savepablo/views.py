@@ -24,13 +24,27 @@ from django.contrib.auth.tokens import default_token_generator
 def home(request):
   #Set opponent to null
   #Used as a soft reset in case the opponent is not reset at end of multiplayer game
+  context = {}
   user = MyUser.objects.get(user=request.user)
   user.opponent = None
   user.queued = False
   user.save()
-  return render(request,'home.html',{})
 
+  context['players'] = MyUser.objects.all().order_by('-points')[:50] #only get top 50 players
+  context['me'] = user
+  return render(request,'home.html',context)
 
+@login_required
+def getBoard(request):
+  #context = {}
+  # context['me'] = MyUser.objects.get(user=request.user)
+  players = list(MyUser.objects.all().order_by('-points')[:50]) #only get top 50 players
+  jsonD = serializers.serialize('json',players)
+  if request.method == "GET":
+    return HttpResponse(jsonD,content_type='application/json')
+  else:
+    return render(request, "home.html", context)
+  
 @transaction.atomic
 def register(request):
   context = {}
