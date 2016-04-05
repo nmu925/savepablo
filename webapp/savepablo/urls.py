@@ -37,5 +37,6 @@ urlpatterns = [
     url(r'^cancel$',views.cancel,name='cancel'),
     url(r'^invite/(?P<token>[a-z0-9\-]+)$',views.invite,name='invite'),
     url(r'^link$',views.link,name='link'),
-    url(r'^$', views.home, name = 'home')
+    url(r'^$', views.home, name = 'home'),
+    url(r'^getBoard$', views.getBoard, name='getBoard'),
 ]

@@ -28,6 +28,30 @@ function updateView(elem,count,cost){
   pC.innerHTML = cost;
 
 }
+
+function updateLeaderboard() {
+
+  $.ajax({
+    url: "/savepablo/getBoard",
+    data:{csrfmiddlewaretoken: getCSRFToken()},
+    type: "GET",
+    datatype:"json",
+
+    success:function(state){
+      $("ol#board").empty();
+      for(var i = 0; i < state.length; i++){
+        var t = state[i];
+        var temp = t['fields'];        
+        $("ol#board").append("<li>"+t['pk'] + " - $" + temp['points']+"</li>");
+      }
+    },
+    error: function(xhr, textStatus, errorThrown){
+       console.log(textStatus+ ' - request failed: '+errorThrown);
+    }
+
+  });
+}
+
 //Sends ajax request to server, to update money every second
 function updateGame(){
     $.ajax({
@@ -42,11 +66,11 @@ function updateGame(){
         updateMoney(state['money']);
      }
 
-    })
+    });
 }
 
 $(document).ready(function(){
-  
+
   //Load the game state from server
   $.ajax({
     url: "/savepablo/load",
@@ -57,6 +81,8 @@ $(document).ready(function(){
     datatype:"json",
 
     success:function(state){
+      updateLeaderboard();
+
       for(var i = 0; i < state.length; i++){
         var obj = state[i];
         var type = obj['model']
@@ -77,7 +103,7 @@ $(document).ready(function(){
         }
       }
     }
-  })  
+  });
 
 
   /* Sends request to server, which takes care of game logic when clicking
@@ -94,7 +120,7 @@ $(document).ready(function(){
       updateMoney(money);
     }
          
-  })
+  });
   });
 
   /* Handles logic when items is bought*/
@@ -132,9 +158,10 @@ $(document).ready(function(){
 
         }
       }
-    })
+    });
   });
 });
 
 
 setInterval(updateGame,1000)
+setInterval(updateLeaderboard, 1000)
