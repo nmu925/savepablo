@@ -55,6 +55,7 @@ class mItem(models.Model):
 
 
 class Game(models.Model):
+  uuid = models.CharField(max_length = 100)
   p1 = models.OneToOneField(MyUser,related_name='+')
   p2 = models.OneToOneField(MyUser,related_name='+')
 
