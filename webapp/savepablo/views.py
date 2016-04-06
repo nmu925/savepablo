@@ -198,7 +198,7 @@ def mbought(request):
     #update item
     owned = mItem.objects.get(user=request.user,name=id)
     #check if item can be bought
-    if(not(owned.cost <= user.points)):
+    if(not(owned.cost <= user.mPoints)):
       return HttpResponse()
 
     owned.count += 1
@@ -406,4 +406,17 @@ def waitAccept(request):
   if(game.p2 == None):
     return HttpResponseBadRequest()
 
+  return HttpResponse()
+
+@transaction.atomic
+@login_required
+def unload(request):
+  myuser = MyUser.objects.get(user=request.user)
+  game = Game.objects.filter(p1=myuser)
+  if game.exists():
+    for g in game:
+      g.delete()
   return HttpResponse() 
+
+
+

@@ -23,13 +23,11 @@ function sendReadyBegin(){
       //Load the game
       setTimeout(function(){window.location.href = "/savepablo/game"}
                   ,3500); 
-      console.log("success\n");
      },
 
     error:function(state){
       //We recieve an error if we cannot find a match
       //We can simply call the function again until we get a success
-      console.log('not ready\n');     
       setTimeout(sendReadyBegin,2000);
     }
 
@@ -53,7 +51,6 @@ function pingServer(){
       error:function(state){
         //We recieve an error if we cannot find a match
         //We can simply call the function again until we get a success
-        console.log('no match\n');   
         setTimeout(pingServer,1500);
         
       }
@@ -78,7 +75,6 @@ function pingServer2(){
       error:function(state){
         //We recieve an error if we cannot find a match
         //We can simply call the function again until we get a success
-        console.log('not accepted\n');   
         setTimeout(pingServer2,500);
         
       }

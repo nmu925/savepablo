@@ -33,7 +33,6 @@ function updateLeaderboard() {
 
   $.ajax({
     url: "/savepablo/getBoard",
-    data:{csrfmiddlewaretoken: getCSRFToken()},
     type: "GET",
     datatype:"json",
 

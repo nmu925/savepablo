@@ -65,8 +65,6 @@ function getOpp(){
     datatype:"json",
 
     success:function(state){
-        console.log('got opponent:\n' );
-        console.log(JSON.stringify(state));
         fields = state[0]['fields']
         money = fields['mPoints']
         mps = fields['mMps']
@@ -78,8 +76,21 @@ function getOpp(){
 
 }
 $(document).ready(function(){
-  
 
+  //Sends ajax request to remove Games with the user as a player. 
+  $(window).unload(function(){
+    $.ajax({
+      type: 'POST',
+      //false, since ajax request may be cancelled if window is unloaded
+      async: false,
+      url: '/savepablo/unload',
+      data:{csrfmiddlewaretoken: getCSRFToken()},
+      success: function(test){
+        console.log('test worked?');
+      } 
+    })
+  
+  })
   /* Sends request to server, which takes care of game logic when clicking
    * on Kanye */ 
   $("#kanye").click(function() {

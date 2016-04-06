@@ -7,8 +7,59 @@
 {% endblock %}
 
 {% block thirdcol %}
-<div class="col-md-4">
+<div class="col-md-4 container-fluid" id="storeright">
       <h1 class="header"> $ <span id="oMoney"> 0 </span> </h1>
       <h2 class="header">  <span id="oMps"> 1 </span> <span> <small> $/sec </small> </span> </h2>
-    </div>
+      <h1 class="header"> Store </h1>
+      <div class="hover-row">
+        <h3 class="count"> Sell overpriced Yeezys</h3>
+        <figure class="box">
+          <img id="yeezy" class="img" src="{% static 'yeezys.jpg' %}"/>
+        </figure>
+        <p class="text"> Owned: <span id="owned" >0 </span> 
+                                <span>Price: </span>
+                                <span id="price">10</span>
+        </p>
+
+      </div>
+      <div class="hover-row">
+        <h3 class="count"> Convince Kim to lend you money</h3>
+        <figure class="box">
+          <img class="img" id="kim" src="{% static 'kim k.jpg' %}"/>
+        </figure>
+        <p class="text"> Owned: <span id="owned" >0 </span> 
+                                <span>Price: </span>
+                                <span id="price">10</span>
+        </p>
+      </div>
+     <div class="hover-row">
+        <h3 class="count"> Drop an album on Tidal </h3>
+        <figure class="box">
+          <img class="img" id="tidal" src="{% static 'tidal.jpg' %}"/>
+        </figure>
+        <p class="text"> Owned: <span id="owned" >0 </span> 
+                                <span>Price: </span>
+                                <span id="price">100</span>
+        </p>
+      </div>
+      <div class="hover-row">
+        <h3 class="count"> Collect money from GoFundMe</h3>
+        <figure class="box">
+          <img class="img" id="gfm" src="{% static 'gofundme.png' %}"/>
+        </figure>
+          <p class="text"> Owned: <span id="owned" >0 </span> 
+                                  <span>Price: </span>
+                                  <span id="price">1000</span>
+        </p>
+      </div>
+      <div class="hover-row">
+        <h3 class="count"> Loan from Mark Z </h3>
+        <figure class="box">
+          <img class="img" id="mark" src="{% static 'mark z .jpg' %}"/>
+        </figure>
+        <p class="text"> Owned: <span id="owned" >0 </span> 
+                                <span>Price: </span>
+                                <span id="price">10000</span>
+     </div>
+
 {% endblock %}

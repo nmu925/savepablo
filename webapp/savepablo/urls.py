@@ -40,7 +40,7 @@ urlpatterns = [
     url(r'^invite/(?P<id>[a-z0-9\-]+)$',views.invite,name='invite'),
     url(r'^link$',views.link,name='link'),
     url(r'^wait_accept$',views.waitAccept,name='waitAccept'),
-    url(r'^$', views.home, name = 'home')
+    url(r'^unload$',views.unload,name='unload'),
     url(r'^$', views.home, name = 'home'),
     url(r'^getBoard$', views.getBoard, name='getBoard'),
 ]

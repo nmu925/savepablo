@@ -54,7 +54,11 @@ figure img{
   overflow-y: scroll;
   height:100vh;
 }
-
+#store {
+  overflow-y: scroll;
+  height:100vh;
+  padding-right: -10px;
+}
 #me {
   color: red;
 }
