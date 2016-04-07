@@ -13,8 +13,8 @@ class MyUser(models.Model):
   ready = models.BooleanField(default=0)
   mPoints = models.DecimalField(max_digits=11,decimal_places=0, default=0)
   mMps = models.DecimalField(max_digits=100,decimal_places=1,default=1)
-  def get_name(self):
-    return self.user.username
+
+
 
   #queued by default returns an integer value, easier to convert to a bool 
   def is_queued(self):
@@ -55,9 +55,9 @@ class mItem(models.Model):
 
 
 class Game(models.Model):
-  uuid = models.CharField(max_length = 100)
-  p1 = models.OneToOneField(MyUser,related_name='+')
-  p2 = models.OneToOneField(MyUser,related_name='+')
+  uuid = models.CharField(max_length = 100,default='0')
+  p1 = models.OneToOneField(MyUser,related_name='+',default = None,null=True)
+  p2 = models.OneToOneField(MyUser,related_name='+',default = None,null=True)
 
 
 

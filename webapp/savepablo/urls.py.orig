@@ -39,8 +39,11 @@ urlpatterns = [
     url(r'^cancel2$',views.cancel2,name='cancel2'),
     url(r'^invite/(?P<id>[a-z0-9\-]+)$',views.invite,name='invite'),
     url(r'^link$',views.link,name='link'),
+<<<<<<< HEAD
     url(r'^wait_accept$',views.waitAccept,name='waitAccept'),
-    url(r'^unload$',views.unload,name='unload'),
+    url(r'^$', views.home, name = 'home')
+=======
     url(r'^$', views.home, name = 'home'),
     url(r'^getBoard$', views.getBoard, name='getBoard'),
+>>>>>>> 70f377178ebb291f963c42b243fe07eb647e5567
 ]

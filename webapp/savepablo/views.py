@@ -13,7 +13,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from decimal import * 
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-
+import uuid
 
 # Used to generate a one-time-use token to 
 from django.contrib.auth.tokens import default_token_generator
@@ -198,7 +198,7 @@ def mbought(request):
     #update item
     owned = mItem.objects.get(user=request.user,name=id)
     #check if item can be bought
-    if(not(owned.cost <= user.points)):
+    if(not(owned.cost <= user.mPoints)):
       return HttpResponse()
 
     owned.count += 1
@@ -330,6 +330,14 @@ def game(request):
 
     return render(request,'game.html',{})
 
+#Initialize game with players
+@login_required
+def launch(request):
+    myuser = MyUser.objects.get(user=request.user)
+    if(myuser.opponent == None):
+      return HttpResponse('opponent is None wtf please')
+    return render(request,'game.html',{})
+
 
 @login_required
 def getopp(request):
@@ -339,6 +347,7 @@ def getopp(request):
   data = serializers.serialize('json',qset)
   return HttpResponse(data,content_type='application/json')
 
+@transaction.atomic
 @login_required
 def cancel(request):
   user = MyUser.objects.get(user=request.user)
@@ -347,20 +356,67 @@ def cancel(request):
   user.save()
   return HttpResponse()
 
+@transaction.atomic
+@login_required
+def cancel2(request):
+  user = MyUser.objects.get(user=request.user)
+  game = get_object_or_404(Game,p1=user)
+  game.delete()
+  return HttpResponse()
+
+@transaction.atomic
 @login_required
 def link(request):
   
   # Generate a one-time use token for creating html
-  token = default_token_generator.make_token(request.user)
+  user = MyUser.objects.get(user=request.user)
+  id = str(uuid.uuid4())
+  game = Game(uuid=id,p1=user,p2=None)
+  game.save()
   link = """ http://%s%s
       """ % (request.get_host(), 
-            reverse('invite', args=[token]))
+            reverse('invite', args=[id]))
   return HttpResponse(link)
 
 @login_required
-def invite(request,token):
-
-  if not default_token_generator.check_token(token):
-    raise Http404
+@transaction.atomic
+def invite(request,id):
+  # checks if game was created already, and user is waiting for other to accept
+  game = get_object_or_404(Game,uuid=id)
+  p2 = MyUser.objects.get(user=request.user)
+  #makes sure that the same player does not play themselves
+  if (game.p1.user == request.user):
+    return HttpResponse("You can't play yourself!")
+  p1 = MyUser.objects.get(user = game.p1.user) 
+  p1.opponent = p2
+  p2.opponent = p1
+  p1.save()
+  p2.save() 
+  game.p2 = p2
+  game.save() 
   
-  return HttpResponse(token)
+  return render(request,'game.html',{})
+
+@transaction.atomic
+@login_required
+def waitAccept(request):
+  user = MyUser.objects.get(user=request.user)
+  game = Game.objects.get(p1=user)
+
+  if(game.p2 == None):
+    return HttpResponseBadRequest()
+
+  return HttpResponse()
+
+@transaction.atomic
+@login_required
+def unload(request):
+  myuser = MyUser.objects.get(user=request.user)
+  game = Game.objects.filter(p1=myuser)
+  if game.exists():
+    for g in game:
+      g.delete()
+  return HttpResponse() 
+
+
+
