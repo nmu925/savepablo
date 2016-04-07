@@ -28,7 +28,7 @@ function sendReadyBegin(){
     error:function(state){
       //We recieve an error if we cannot find a match
       //We can simply call the function again until we get a success
-      setTimeout(sendReadyBegin,2000);
+      setTimeout(sendReadyBegin,500);
     }
 
     })

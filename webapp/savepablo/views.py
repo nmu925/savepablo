@@ -415,6 +415,24 @@ def unload(request):
   game = Game.objects.filter(p1=myuser)
   if game.exists():
     for g in game:
+      p1 = g.p1
+      p2 = g.p2 
+      p1.mPoints = 0
+      p1.mMps = 1
+      p1.opponent = None
+      p2.mPoints = 0
+      p2.mMps = 1
+      p2.opponent = None 
+      p1.save()
+      p2.save() 
+      items1 = mItem.objects.filter(user=p1.user)
+      items2 = mItem.objects.filter(user=p2.user)
+      if items1.exists():
+        for item in items1:
+          item.delete()
+      if items2.exists():
+        for item in items2:
+          item.delete() 
       g.delete()
   return HttpResponse() 
 
