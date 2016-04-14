@@ -19,7 +19,6 @@ import uuid
 from django.contrib.auth.tokens import default_token_generator
 # Create your views here.
 
-
 @login_required
 def home(request):
   #Set opponent to null
