@@ -13,7 +13,6 @@ class MyUser(models.Model):
   ready = models.BooleanField(default=0)
   mPoints = models.DecimalField(max_digits=11,decimal_places=0, default=0)
   mMps = models.DecimalField(max_digits=100,decimal_places=1,default=1)
-  friends = models.ManyToManyField('self', symmetrical=False, blank=True)
 
   #queued by default returns an integer value, easier to convert to a bool 
   def is_queued(self):

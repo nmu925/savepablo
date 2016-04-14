@@ -31,6 +31,9 @@ def home(request):
 
   context['players'] = MyUser.objects.all().order_by('-points')[:50] #only get top 50 players
   context['me'] = user
+
+  context['friends'] = MyUser.objects.all()  
+
   return render(request,'home.html',context)
 
 @login_required
