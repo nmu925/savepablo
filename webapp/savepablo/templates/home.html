@@ -13,51 +13,51 @@
   <div class="row-fluid">
     <div class="col-md-4" id = "store">
       <h1 class="header"> Store </h1>
-      <div class="hover-row">
+      <div class="hover row">
         <h3 class="count"> Sell overpriced Yeezys</h3>
         <figure class="box">
-          <img id="yeezy" class="img" src="{% static 'yeezys.jpg' %}"/>
+          <img id="yeezy" class="img" src="{% static 'img/yeezys.jpg' %}"/>
         </figure>
         <p class="text"> Owned: <span id="owned" >0 </span> 
                                 <span>Price: </span>
-                                <span id="price">10</span>
+                                <span id="price">1</span>
         </p>
 
       </div>
-      <div class="hover-row">
+      <div class="hover row">
         <h3 class="count"> Convince Kim to lend you money</h3>
         <figure class="box">
-          <img class="img" id="kim" src="{% static 'kim k.jpg' %}"/>
+          <img class="img" id="kim" src="{% static 'img/kim k.jpg' %}"/>
         </figure>
         <p class="text"> Owned: <span id="owned" >0 </span> 
                                 <span>Price: </span>
                                 <span id="price">10</span>
         </p>
       </div>
-     <div class="hover-row">
+     <div class="hover row">
         <h3 class="count"> Drop an album on Tidal </h3>
         <figure class="box">
-          <img class="img" id="tidal" src="{% static 'tidal.jpg' %}"/>
+          <img class="img" id="tidal" src="{% static 'img/tidal.jpg' %}"/>
         </figure>
         <p class="text"> Owned: <span id="owned" >0 </span> 
                                 <span>Price: </span>
                                 <span id="price">100</span>
         </p>
       </div>
-      <div class="hover-row">
+      <div class="hover row">
         <h3 class="count"> Collect money from GoFundMe</h3>
         <figure class="box">
-          <img class="img" id="gfm" src="{% static 'gofundme.png' %}"/>
+          <img class="img" id="gfm" src="{% static 'img/gofundme.png' %}"/>
         </figure>
           <p class="text"> Owned: <span id="owned" >0 </span> 
                                   <span>Price: </span>
                                   <span id="price">1000</span>
         </p>
       </div>
-      <div class="hover-row">
+      <div class="hover row">
         <h3 class="count"> Loan from Mark Z </h3>
         <figure class="box">
-          <img class="img" id="mark" src="{% static 'mark z .jpg' %}"/>
+          <img class="img" id="mark" src="{% static 'img/mark z .jpg' %}"/>
         </figure>
         <p class="text"> Owned: <span id="owned" >0 </span> 
                                 <span>Price: </span>
@@ -70,12 +70,12 @@
       <h2 class="header">  <span id="mps"> 1 </span> <span> <small> $/sec </small> </span> </h2>
       <div class="hover">
         <figure>
-          <img class="img" id="kanye" src="{% static 'kanye-face.jpg' %}">
+          <img class="img" id="kanye" src="{% static 'img/kanye-face.jpg' %}">
         </figure>
       </div>
     </div>
     {% block thirdcol %}
-    <div class="col-md-4">
+    <div class="col-md-4" id='thirdcol'>
       <h1 class="header">Leaderboard</h1>
       <ol id = "board">
         {% for player in players %}

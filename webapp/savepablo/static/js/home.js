@@ -37,11 +37,12 @@ function updateLeaderboard() {
     datatype:"json",
 
     success:function(state){
+      console.log(state);
       $("ol#board").empty();
       for(var i = 0; i < state.length; i++){
         var t = state[i];
         var temp = t['fields'];        
-        $("ol#board").append("<li>"+t['pk'] + " - $" + temp['points']+"</li>");
+        $("ol#board").append("<li>"+temp['user'] + " - $" + temp['points']+"</li>");
       }
     },
     error: function(xhr, textStatus, errorThrown){

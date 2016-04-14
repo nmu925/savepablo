@@ -1,10 +1,7 @@
-.hover{
-  height:10%;
-}
-.row {
+/*.row {
   border: 2px solid;
   border-color: #C0C0C0;
-}
+}*/
 
 #kanye {
   margin-left: auto;
@@ -35,14 +32,16 @@ figure img{
 
 }
 /* Hover code form http://codepen.io/nxworld/pen/ZYNOBZ */ 
-.hover figure img{
+#store .hover figure img{
   -webkit-transform: scale(1);
 	transform: scale(1);
 	-webkit-transition: .15s ease-in-out;
 	transition: ..15s ease-in-out;
+  height:125px;
+  width:200px;
 }
 
-.hover figure:hover img {
+#store .hover figure:hover img {
 	-webkit-transform: scale(1.1);
 	transform: scale(1.1);
 }
@@ -53,12 +52,7 @@ figure img{
 #store {
   overflow-y: scroll;
   height:100vh;
-}
-#store {
-  overflow-y: scroll;
-  height:100vh;
   padding-right: -10px;
 }
-#me {
-  color: red;
-}
+
+

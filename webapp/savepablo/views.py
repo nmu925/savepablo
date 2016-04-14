@@ -175,7 +175,7 @@ def bought(request):
     user.save() 
     #send data back to client
     data['id'] = str(id)
-    data['mps'] = str(mpsNew)
+    data['mps'] = str(user.mps)
     data['cost'] = str(costNew)
     data['money'] = str(user.points)
     data['count'] = '1'
