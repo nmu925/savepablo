@@ -19,7 +19,6 @@ import uuid
 from django.contrib.auth.tokens import default_token_generator
 # Create your views here.
 
-
 @login_required
 def home(request):
   #Set opponent to null
@@ -32,6 +31,9 @@ def home(request):
 
   context['players'] = MyUser.objects.all().order_by('-points')[:50] #only get top 50 players
   context['me'] = user
+
+  context['friends'] = MyUser.objects.all()  
+
   return render(request,'home.html',context)
 
 @login_required

@@ -41,8 +41,10 @@ function updateLeaderboard() {
       $("ol#board").empty();
       for(var i = 0; i < state.length; i++){
         var t = state[i];
-        var temp = t['fields'];        
-        $("ol#board").append("<li>"+temp['user'] + " - $" + temp['points']+"</li>");
+        var temp = t['fields'];
+        var user = t['user'];
+        var username = user['username']
+        $("ol#board").append("<li>"+username + " - $" + temp['points']+"</li>");
       }
     },
     error: function(xhr, textStatus, errorThrown){
