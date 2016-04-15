@@ -50,9 +50,11 @@ figure img{
 }
 
 #store {
-  overflow-y: scroll;
-  height:100vh;
+  overflow-y:scroll;
+  height:90vh;
   padding-right: -10px;
 }
-
+html{
+    overflow:hidden;
+}
 
