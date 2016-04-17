@@ -41,12 +41,8 @@ def home(request):
 def getBoard(request):
   context = {}
   # context['me'] = MyUser.objects.get(user=request.user)
-  players = list(MyUser.objects.order_by('-points')[:20]) #only get top 20 players
-  names = []
-  for p in players:
-    names.append(str(p.user.get_username())+ " - $" + str(p.points))
-  jsonP = serializers.serialize('json', players)
-  jsonD = json.dumps({"players": names})
+  players = list(MyUser.objects.all().order_by('-points')[:50]) #only get top 50 players
+  jsonD = serializers.serialize('json',players)
   if request.method == "GET":
     return HttpResponse(jsonD,content_type='application/json')
   else:
@@ -443,6 +439,23 @@ def unload(request):
   return HttpResponse() 
 
 @login_required
+<<<<<<< HEAD
+def debuff(request):
+  id = request.POST['id']
+  '''if(id == 'pirate'):
+    continue;
+  elif(id == 'first'): 
+    continue;
+  elif(id == 'second'): 
+    continue;
+  elif(id == 'third'): 
+    continue;
+  elif(id == 'stop'): 
+    continue;'''
+
+  return HttpResponse(request.POST['id'])
+
+=======
 @transaction.atomic
 def search(request):
   context = {}
@@ -459,19 +472,5 @@ def search(request):
     errors.append("No match for " + name + ". But Kanye still loves Kanye.")
   context['users'] = users
   context['errors'] = errors
-  return render(request, 'results.html', context)@login_required
-def debuff(request):
-  id = request.POST['id']
-  '''if(id == 'pirate'):
-    continue;
-  elif(id == 'first'): 
-    continue;
-  elif(id == 'second'): 
-    continue;
-  elif(id == 'third'): 
-    continue;
-  elif(id == 'stop'): 
-    continue;'''
-
-  return HttpResponse(request.POST['id'])
-
+  return render(request, 'results.html', context)
+>>>>>>> 3a213685e9c62b5eb599e345435f16a158b0a7eb
