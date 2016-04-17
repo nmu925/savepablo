@@ -438,5 +438,19 @@ def unload(request):
       g.delete()
   return HttpResponse() 
 
+@login_required
+def debuff(request):
+  id = request.POST['id']
+  '''if(id == 'pirate'):
+    continue;
+  elif(id == 'first'): 
+    continue;
+  elif(id == 'second'): 
+    continue;
+  elif(id == 'third'): 
+    continue;
+  elif(id == 'stop'): 
+    continue;'''
 
+  return HttpResponse(request.POST['id'])
 

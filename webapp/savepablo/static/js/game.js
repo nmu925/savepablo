@@ -145,7 +145,27 @@ $(document).ready(function(){
       }
     })
   });
+  /* Handles logic when debuff is bought*/
+  $('.debuff').click(function(event){
+
+    var hoverElem = event.target;
+    var id = hoverElem.id;
+
+    $.ajax({
+      url: "/savepablo/debuff",
+      
+      data:{csrfmiddlewaretoken: getCSRFToken(),
+            id : id},
+      type: "POST",
+      datatype:"json", 
+
+      success: function(data){
+          console.log(data);
+        }
+      })
+    })
+
 });
 //Temporary interval times for now, may need to decrease time
-setInterval(updateGame,1000)
-setInterval(getOpp,1000)
+setInterval(updateGame,1000);
+setInterval(getOpp,1000);
