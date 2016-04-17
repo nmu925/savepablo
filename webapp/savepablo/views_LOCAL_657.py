@@ -32,21 +32,19 @@ def home(request):
   context['players'] = MyUser.objects.all().order_by('-points')[:50] #only get top 50 players
   context['me'] = user
 
-  context['friends'] = MyUser.objects.all()
+  context['friends'] = MyUser.objects.all()  
 
-  context['form'] = SearchForm()
   return render(request,'home.html',context)
 
 @login_required
 def getBoard(request):
-  context = {}
+  #context = {}
   # context['me'] = MyUser.objects.get(user=request.user)
   players = list(MyUser.objects.all().order_by('-points')[:50]) #only get top 50 players
   jsonD = serializers.serialize('json',players)
   if request.method == "GET":
     return HttpResponse(jsonD,content_type='application/json')
   else:
-    context['form'] = SearchForm()
     return render(request, "home.html", context)
   
 @transaction.atomic
@@ -276,10 +274,12 @@ def mstep(request):
   data['money'] = str(user.mPoints)
   return HttpResponse(json.dumps(data),content_type='application/json')
 
+
+
 #returns to multiplayer home
 @login_required
 def mHome(request):
-  return render(request,'mHome.html',{SearchForm()})
+  return render(request,'mHome.html',{})
 
 @login_required
 @transaction.atomic
@@ -330,7 +330,7 @@ def game(request):
       game = Game(p1=user,p2=opp)
       game.save()
 
-    return render(request,'game.html',{SearchForm()})
+    return render(request,'game.html',{})
 
 #Initialize game with players
 @login_required
@@ -338,7 +338,7 @@ def launch(request):
     myuser = MyUser.objects.get(user=request.user)
     if(myuser.opponent == None):
       return HttpResponse('opponent is None wtf please')
-    return render(request,'game.html',{SearchForm()})
+    return render(request,'game.html',{})
 
 
 @login_required
@@ -397,7 +397,7 @@ def invite(request,id):
   game.p2 = p2
   game.save() 
   
-  return render(request,'game.html',{SearchForm()})
+  return render(request,'game.html',{})
 
 @transaction.atomic
 @login_required
@@ -439,23 +439,6 @@ def unload(request):
   return HttpResponse() 
 
 @login_required
-@transaction.atomic
-def search(request):
-  context = {}
-  errors=[]
-  form = SearchForm(request.GET)
-  context['form'] = form
-  
-  if not form.is_valid():
-    errors.append("Invalid form")
-    return render(request,'results.html',context)
-  name = form.cleaned_data['username']
-  users = User.objects.filter(username=name)
-  if len(list(users)) == 0:
-    errors.append("No match for " + name + ". But Kanye still loves Kanye.")
-  context['users'] = users
-  context['errors'] = errors
-  return render(request, 'results.html', context)@login_required
 def debuff(request):
   id = request.POST['id']
   '''if(id == 'pirate'):

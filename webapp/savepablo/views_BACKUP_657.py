@@ -439,6 +439,23 @@ def unload(request):
   return HttpResponse() 
 
 @login_required
+<<<<<<< HEAD
+def debuff(request):
+  id = request.POST['id']
+  '''if(id == 'pirate'):
+    continue;
+  elif(id == 'first'): 
+    continue;
+  elif(id == 'second'): 
+    continue;
+  elif(id == 'third'): 
+    continue;
+  elif(id == 'stop'): 
+    continue;'''
+
+  return HttpResponse(request.POST['id'])
+
+=======
 @transaction.atomic
 def search(request):
   context = {}
@@ -455,19 +472,5 @@ def search(request):
     errors.append("No match for " + name + ". But Kanye still loves Kanye.")
   context['users'] = users
   context['errors'] = errors
-  return render(request, 'results.html', context)@login_required
-def debuff(request):
-  id = request.POST['id']
-  '''if(id == 'pirate'):
-    continue;
-  elif(id == 'first'): 
-    continue;
-  elif(id == 'second'): 
-    continue;
-  elif(id == 'third'): 
-    continue;
-  elif(id == 'stop'): 
-    continue;'''
-
-  return HttpResponse(request.POST['id'])
-
+  return render(request, 'results.html', context)
+>>>>>>> 3a213685e9c62b5eb599e345435f16a158b0a7eb

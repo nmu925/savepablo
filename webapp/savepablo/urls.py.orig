@@ -43,6 +43,9 @@ urlpatterns = [
     url(r'^unload$',views.unload,name='unload'),
     url(r'^$', views.home, name = 'home'),
     url(r'^getBoard$', views.getBoard, name='getBoard'),
-    url(r'^search$', views.search, name='search'),
+<<<<<<< HEAD
     url(r'^debuff$',views.debuff,name='debuff')
+=======
+    url(r'^search$', views.search, name='search'),
+>>>>>>> 3a213685e9c62b5eb599e345435f16a158b0a7eb
 ]
