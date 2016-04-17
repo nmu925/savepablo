@@ -89,7 +89,7 @@
       </h1>
       <h1 class="header">Fam</h1>
         {% for friend in friends %}
-          <p>{{friend.user.username}}</p>
+          <a href="{% url 'invite' friend.id %}">{{friend.user.username}}</a>
         {% endfor %}
     </div>
     {% endblock %}
