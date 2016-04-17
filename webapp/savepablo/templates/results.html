@@ -1,0 +1,15 @@
+{% extends 'navbar.html' %}
+
+{% block content %}
+<h1 class="header">Fam</h1>
+{% for user in users %}
+	<a href="#">{{user.username}}</a>
+{% endfor %}
+
+{% for error in errors %}
+    <p style="color: red">
+    {{ error }}
+    </p>
+{% endfor %}
+
+{% endblock %}

@@ -33,3 +33,9 @@ class RegistrationForm(forms.Form):
       raise forms.ValidationError('User name already taken')
 
     return username
+
+class SearchForm(forms.Form):
+  username = forms.CharField(max_length=30)
+  def clean(self):
+    cleaned_data=super(SearchForm, self).clean()
+    return cleaned_data

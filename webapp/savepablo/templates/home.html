@@ -87,10 +87,6 @@
         {% endfor %}
       </ol>
       </h1>
-      <h1 class="header">Fam</h1>
-        {% for friend in friends %}
-          <a href="{% url 'invite' friend.id %}">{{friend.user.username}}</a>
-        {% endfor %}
     </div>
     {% endblock %}
   </div>
