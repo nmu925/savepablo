@@ -23,7 +23,7 @@ class MyUser(models.Model):
   	return self.user.username
   def __str__(self):
   	return self.__unicode__()
-
+  
 
 class Item(models.Model):
   name = models.CharField(max_length = 20)

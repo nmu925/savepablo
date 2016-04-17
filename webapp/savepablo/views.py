@@ -41,8 +41,12 @@ def home(request):
 def getBoard(request):
   context = {}
   # context['me'] = MyUser.objects.get(user=request.user)
-  players = list(MyUser.objects.all().order_by('-points')[:50]) #only get top 50 players
-  jsonD = serializers.serialize('json',players)
+  players = list(MyUser.objects.order_by('-points')[:20]) #only get top 20 players
+  names = []
+  for p in players:
+    names.append(str(p.user.get_username())+ " - $" + str(p.points))
+  jsonP = serializers.serialize('json', players)
+  jsonD = json.dumps({"players": names})
   if request.method == "GET":
     return HttpResponse(jsonD,content_type='application/json')
   else:
