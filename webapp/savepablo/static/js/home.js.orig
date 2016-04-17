@@ -41,16 +41,20 @@ function updateLeaderboard() {
       $("ol#board").empty();
       for(var i = 0; i < state.length; i++){
         var t = state[i];
+<<<<<<< HEAD
+        var temp = t['fields'];        
+        $("ol#board").append("<li>"+temp['user'] + " - $" + temp['points']+"</li>");
+=======
         var temp = t['fields'];
         var user = t['user'];
         var username = user['username']
         $("ol#board").append("<li>"+username + " - $" + temp['points']+"</li>");
+>>>>>>> 31572e497cddf4d0ef1c1b8686a10ed62f228f64
       }
     },
     error: function(xhr, textStatus, errorThrown){
        console.log(textStatus+ ' - request failed: '+errorThrown);
     }
-
   });
 }
 
