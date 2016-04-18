@@ -96,7 +96,7 @@ $(document).ready(function(){
       url: '/savepablo/unload',
       data:{csrfmiddlewaretoken: getCSRFToken()},
       success: function(test){
-        console.log('test worked?');
+
       } 
     })
   
@@ -135,6 +135,7 @@ $(document).ready(function(){
       success: function(data){
         $('#hold').empty(); //Remove any messages
         //Reset images to original
+        //Necesary since the images may be pirate bay from the debuff
         var elem = document.getElementsByClassName('image');
         if(elem[0].src.indexOf('/static/img/pirate-bay.jpg') != -1 ){
               elem[0].src = '/static/img/yeezys.jpg'

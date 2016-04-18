@@ -364,7 +364,7 @@ def game(request):
 def launch(request):
     myuser = MyUser.objects.get(user=request.user)
     if(myuser.opponent == None):
-      return HttpResponse('opponent is None wtf please')
+      return HttpResponse('Invalid multiplayer game')
     return render(request,'game.html',{'form':SearchForm()})
 
 
@@ -434,7 +434,7 @@ def invite(request,id):
   game.p2 = p2
   game.save() 
   
-  return render(request,'game.html',{'form':SearchForm()})
+  return redirect(reverse('launch'))
 
 @transaction.atomic
 @login_required
@@ -446,6 +446,37 @@ def waitAccept(request):
     return HttpResponseBadRequest()
 
   return HttpResponse()
+#helper that reset database values
+def unloadHelp(game):
+    if game.exists():
+      for g in game:
+        p1 = g.p1
+        p2 = g.p2 
+        p1.mPoints = 0
+        p1.mMps = 1
+        p1.opponent = None
+        p2.mPoints = 0
+        p2.mMps = 1
+        p2.opponent = None 
+        p1.save()
+        p2.save() 
+        items1 = mItem.objects.filter(user=p1.user)
+        items2 = mItem.objects.filter(user=p2.user)
+        debuff1 = Debuff.objects.filter(user=p1.user)
+        debuff2 = Debuff.objects.filter(user=p2.user)
+        if items1.exists():
+          for item in items1:
+            item.delete()
+        if items2.exists():
+          for item in items2:
+            item.delete() 
+        if debuff1.exists():
+          for item in debuff1:
+            item.delete() 
+        if debuff2.exists():
+          for item in debuff2:
+            item.delete() 
+        g.delete()
 
 #reset database values when a multiplayer game is finished/terminated
 @transaction.atomic
@@ -453,35 +484,9 @@ def waitAccept(request):
 def unload(request):
   myuser = MyUser.objects.get(user=request.user)
   game = Game.objects.filter(p1=myuser)
-  if game.exists():
-    for g in game:
-      p1 = g.p1
-      p2 = g.p2 
-      p1.mPoints = 0
-      p1.mMps = 1
-      p1.opponent = None
-      p2.mPoints = 0
-      p2.mMps = 1
-      p2.opponent = None 
-      p1.save()
-      p2.save() 
-      items1 = mItem.objects.filter(user=p1.user)
-      items2 = mItem.objects.filter(user=p2.user)
-      debuff1 = Debuff.objects.filter(user=p1.user)
-      debuff2 = Debuff.objects.filter(user=p2.user)
-      if items1.exists():
-        for item in items1:
-          item.delete()
-      if items2.exists():
-        for item in items2:
-          item.delete() 
-      if debuff1.exists():
-        for item in debuff1:
-          item.delete() 
-      if debuff2.exists():
-        for item in debuff2:
-          item.delete() 
-      g.delete()
+  game2 = Game.objects.filter(p2=myuser)
+  unloadHelp(game)
+  unloadHelp(game2)
   return HttpResponse() 
 
 @login_required
@@ -504,7 +509,6 @@ def search(request):
   return render(request, 'results.html', context)
 
 
-@login_required
 def apply_debuff(request):
   user = MyUser.objects.get(user=request.user)
   opp = user.opponent

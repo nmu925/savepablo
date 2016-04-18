@@ -37,24 +37,29 @@ function updateLeaderboard() {
     datatype:"json",
 
     success:function(state){
-      console.log(state);
       $("ol#board").empty();
+<<<<<<< HEAD
       for(var i = 0; i < state.length; i++){
         var t = state[i];
-<<<<<<< HEAD
-        var temp = t['fields'];        
-        $("ol#board").append("<li>"+temp['user'] + " - $" + temp['points']+"</li>");
-=======
         var temp = t['fields'];
         var user = t['user'];
-        var username = user['username']
         $("ol#board").append("<li>"+username + " - $" + temp['points']+"</li>");
->>>>>>> 31572e497cddf4d0ef1c1b8686a10ed62f228f64
+=======
+      for(var i = 0; i < state.players.length; i++){
+        var t = state.players[i];
+        // var temp = t['fields'];
+        // var user = temp['user'];
+        // console.log(user);
+        // var temp2 = user['fields']
+        // var username = temp2['username']
+        $("ol#board").append("<li>"+t+"</li>");
+>>>>>>> 729714f4597ca83a6aa6971136bd7e8c2371bf2c
       }
     },
     error: function(xhr, textStatus, errorThrown){
        console.log(textStatus+ ' - request failed: '+errorThrown);
     }
+
   });
 }
 
@@ -130,7 +135,7 @@ $(document).ready(function(){
   });
 
   /* Handles logic when items is bought*/
-  $('.img').not('#kanye').click(function(event){
+  $('.image').not('#kanye').click(function(event){
 
     var hoverElem = event.target;
     var id = hoverElem.id;
