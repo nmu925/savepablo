@@ -12,11 +12,13 @@
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="col-md-4" id = "store">
+      {% block alerts %}
+      {% endblock %}
       <h1 class="header"> Store </h1>
       <div class="hover row">
         <h3 class="count"> Sell overpriced Yeezys</h3>
         <figure class="box">
-          <img id="yeezy" class="img" src="{% static 'img/yeezys.jpg' %}"/>
+          <img id="yeezy" class="image" src="{% static 'img/yeezys.jpg' %}"/>
         </figure>
         <p class="text"> Owned: <span id="owned" >0 </span> 
                                 <span>Price: </span>
@@ -27,7 +29,7 @@
       <div class="hover row">
         <h3 class="count"> Convince Kim to lend you money</h3>
         <figure class="box">
-          <img class="img" id="kim" src="{% static 'img/kim k.jpg' %}"/>
+          <img class="image" id="kim" src="{% static 'img/kim k.jpg' %}"/>
         </figure>
         <p class="text"> Owned: <span id="owned" >0 </span> 
                                 <span>Price: </span>
@@ -37,7 +39,7 @@
      <div class="hover row">
         <h3 class="count"> Drop an album on Tidal </h3>
         <figure class="box">
-          <img class="img" id="tidal" src="{% static 'img/tidal.jpg' %}"/>
+          <img class="image" id="tidal" src="{% static 'img/tidal.jpg' %}"/>
         </figure>
         <p class="text"> Owned: <span id="owned" >0 </span> 
                                 <span>Price: </span>
@@ -47,7 +49,7 @@
       <div class="hover row">
         <h3 class="count"> Collect money from GoFundMe</h3>
         <figure class="box">
-          <img class="img" id="gfm" src="{% static 'img/gofundme.png' %}"/>
+          <img class="image" id="gfm" src="{% static 'img/gofundme.png' %}"/>
         </figure>
           <p class="text"> Owned: <span id="owned" >0 </span> 
                                   <span>Price: </span>
@@ -57,7 +59,7 @@
       <div class="hover row">
         <h3 class="count"> Loan from Mark Z </h3>
         <figure class="box">
-          <img class="img" id="mark" src="{% static 'img/mark z .jpg' %}"/>
+          <img class="image" id="mark" src="{% static 'img/mark z .jpg' %}"/>
         </figure>
         <p class="text"> Owned: <span id="owned" >0 </span> 
                                 <span>Price: </span>

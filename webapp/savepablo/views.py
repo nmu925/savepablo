@@ -14,10 +14,12 @@ from decimal import *
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 import uuid
+import time
 
 # Used to generate a one-time-use token to 
 from django.contrib.auth.tokens import default_token_generator
 # Create your views here.
+
 
 @login_required
 def home(request):
@@ -127,6 +129,18 @@ def getCost(item):
     return 1000
   if(item == 'mark'):
     return 10000
+#definines the initial cost to buy each debuff
+def getDebuffCost(item):
+  if(item == 'pirate'):
+    return 100
+  if(item == 'first'):
+    return 1000
+  if(item == 'second'):
+    return 10000
+  if(item == 'third'):
+    return 100000
+  if(item == 'stop'):
+    return 1000000
 
 @login_required
 def bought(request):
@@ -186,10 +200,19 @@ def bought(request):
     jsonD = json.dumps(data)
     return HttpResponse(jsonD,content_type='application/json')
 
-
+#multiplayer buy items handler
 @login_required
 def mbought(request):
+
   user = MyUser.objects.get(user=request.user)
+  t = int(round(time.time())) - user.time
+  
+  if((not user.canBuy) and (t >= 20)):#check if users debuff has worn off  
+    user.canBuy = True
+    user.time = 0
+    user.save()
+  if(not user.canBuy):
+    return HttpResponseBadRequest("debuff " + str(20-t))
   id = request.POST['id']
   data = {}
   if(not(id == 'yeezy' or id == 'kim' or id =='tidal' or id =='gfm' or id =='mark')):
@@ -279,7 +302,7 @@ def mstep(request):
 #returns to multiplayer home
 @login_required
 def mHome(request):
-  return render(request,'mHome.html',{SearchForm()})
+  return render(request,'mHome.html',{'form':SearchForm()})
 
 @login_required
 @transaction.atomic
@@ -330,7 +353,7 @@ def game(request):
       game = Game(p1=user,p2=opp)
       game.save()
 
-    return render(request,'game.html',{SearchForm()})
+    return render(request,'game.html',{'form':SearchForm()})
 
 #Initialize game with players
 @login_required
@@ -338,7 +361,7 @@ def launch(request):
     myuser = MyUser.objects.get(user=request.user)
     if(myuser.opponent == None):
       return HttpResponse('opponent is None wtf please')
-    return render(request,'game.html',{SearchForm()})
+    return render(request,'game.html',{'form':SearchForm()})
 
 
 @login_required
@@ -373,6 +396,16 @@ def link(request):
   # Generate a one-time use token for creating html
   user = MyUser.objects.get(user=request.user)
   id = str(uuid.uuid4())
+  #delete any existing games that the user is in,although the user should not be inany eixsting games
+  filt = Game.objects.filter(p1=user)
+  filt2 = Game.objects.filter(p2=user)
+  if filt.exists():
+    for f in filt:
+      f.delete()
+  if filt2.exists():
+    for f in filt2:
+      f.delete()
+  #Create new game with unknown p2
   game = Game(uuid=id,p1=user,p2=None)
   game.save()
   link = """ http://%s%s
@@ -397,7 +430,7 @@ def invite(request,id):
   game.p2 = p2
   game.save() 
   
-  return render(request,'game.html',{SearchForm()})
+  return render(request,'game.html',{'form':SearchForm()})
 
 @transaction.atomic
 @login_required
@@ -410,6 +443,7 @@ def waitAccept(request):
 
   return HttpResponse()
 
+#reset database values when a multiplayer game is finished/terminated
 @transaction.atomic
 @login_required
 def unload(request):
@@ -429,11 +463,19 @@ def unload(request):
       p2.save() 
       items1 = mItem.objects.filter(user=p1.user)
       items2 = mItem.objects.filter(user=p2.user)
+      debuff1 = Debuff.objects.filter(user=p1.user)
+      debuff2 = Debuff.objects.filter(user=p2.user)
       if items1.exists():
         for item in items1:
           item.delete()
       if items2.exists():
         for item in items2:
+          item.delete() 
+      if debuff1.exists():
+        for item in debuff1:
+          item.delete() 
+      if debuff2.exists():
+        for item in debuff2:
           item.delete() 
       g.delete()
   return HttpResponse() 
@@ -455,12 +497,20 @@ def search(request):
     errors.append("No match for " + name + ". But Kanye still loves Kanye.")
   context['users'] = users
   context['errors'] = errors
-  return render(request, 'results.html', context)@login_required
-def debuff(request):
+  return render(request, 'results.html', context)
+
+
+@login_required
+def apply_debuff(request):
+  user = MyUser.objects.get(user=request.user)
+  opp = user.opponent
   id = request.POST['id']
-  '''if(id == 'pirate'):
-    continue;
-  elif(id == 'first'): 
+  if(id == 'pirate'):
+    opp.canBuy = False 
+    t = int(round(time.time()))
+    opp.time = t
+    opp.save() 
+  '''elif(id == 'first'): 
     continue;
   elif(id == 'second'): 
     continue;
@@ -468,6 +518,59 @@ def debuff(request):
     continue;
   elif(id == 'stop'): 
     continue;'''
+  return HttpResponse()
 
-  return HttpResponse(request.POST['id'])
+#Handles visual updates and logic checks for buying a debuff 
+@login_required
+def debuff(request):
+  user = MyUser.objects.get(user=request.user)
+  opp = user.opponent
+  id = request.POST['id']
+  data = {}
+  if(not(id == 'pirate' or id == 'first' or id =='second' or id =='third' or id =='stop')):
+    #Invalid items bought, return bad request
+    return HttpResponseBadRequest()
+
+  #Fetch item, update count 
+  try:
+    #update item
+    owned = Debuff.objects.get(user=request.user,name=id)
+    #check if item can be bought
+    if(not(owned.cost <= user.mPoints)):
+      return HttpResponse()
+
+    ogCost = owned.cost
+    owned.cost = owned.cost * Decimal(1.5) 
+    owned.save()
+    #update user mps
+    user.mPoints = user.mPoints - ogCost
+    user.save()
+    #send data back to client
+    data['id'] = str(id)
+    data['cost'] = str(owned.cost)
+    data['money'] = str(user.mPoints)
+    jsonD = json.dumps(data)
+    apply_debuff(request)#execute debuff
+    return HttpResponse(jsonD,content_type='application/json')
+
+  except ObjectDoesNotExist:
+    #create new item
+    ogCost = getDebuffCost(id)
+    costNew = ogCost * 1.5
+    #check if item can be bought
+    if not(ogCost <= user.mPoints):
+      return HttpResponse()
+    new = Debuff(name=id,cost=costNew,user=request.user)
+    new.save()
+    #update user points
+    user.mPoints = user.mPoints - ogCost
+    user.save() 
+    #send data back to client
+    data['id'] = str(id)
+    data['cost'] = str(costNew)
+    data['money'] = str(user.mPoints)
+    jsonD = json.dumps(data)
+    apply_debuff(request)#execute debuff
+    return HttpResponse(jsonD,content_type='application/json')
+
 

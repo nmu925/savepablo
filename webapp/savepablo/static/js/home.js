@@ -43,7 +43,6 @@ function updateLeaderboard() {
         var t = state[i];
         var temp = t['fields'];
         var user = t['user'];
-        var username = user['username']
         $("ol#board").append("<li>"+username + " - $" + temp['points']+"</li>");
       }
     },
@@ -126,7 +125,7 @@ $(document).ready(function(){
   });
 
   /* Handles logic when items is bought*/
-  $('.img').not('#kanye').click(function(event){
+  $('.image').not('#kanye').click(function(event){
 
     var hoverElem = event.target;
     var id = hoverElem.id;

@@ -38,8 +38,17 @@ function updateView(elem,count,cost){
   //update final values shown 
   oC.innerHTML = count;
   pC.innerHTML = cost;
-
 }
+//Update only cost element of an image elem, used for right column
+function updateCost(elem,cost){
+  //Get corresponding fields
+  var par = elem.parentNode.parentNode;
+  var p = par.querySelector(".text");
+  var pC = p.querySelector("#price");
+  //update final values shown 
+  pC.innerHTML = cost;
+}
+
 
 //Sends ajax request to server, to update money every second
 function updateGame(){
@@ -75,6 +84,7 @@ function getOpp(){
     })
 
 }
+
 $(document).ready(function(){
 
   //Sends ajax request to remove Games with the user as a player. 
@@ -109,7 +119,7 @@ $(document).ready(function(){
   });
 
   /* Handles logic when items is bought*/
-  $('.img').not('#kanye').click(function(event){
+  $('.image').not('#kanye').click(function(event){
 
     var hoverElem = event.target;
     var id = hoverElem.id;
@@ -123,6 +133,16 @@ $(document).ready(function(){
       datatype:"json", 
 
       success: function(data){
+        $('#hold').empty(); //Remove any messages
+        //Reset images to original
+        var elem = document.getElementsByClassName('image');
+        if(elem[0].src.indexOf('/static/img/pirate-bay.jpg') != -1 ){
+              elem[0].src = '/static/img/yeezys.jpg'
+              elem[1].src = '/static/img/kim k.jpg'
+              elem[2].src = '/static/img/tidal.jpg'
+              elem[3].src = '/static/img/gofundme.png'
+              elem[4].src = '/static/img/mark z .jpq'
+        }
         // Not enough money to buy
         if(data.length == 0){
           console.log('not enough money')
@@ -139,10 +159,38 @@ $(document).ready(function(){
           //update final values shown 
           updateMPS(mps);
           updateMoney(money);
-          updateView(hoverElem,count,cost)
+          updateView(hoverElem,count,cost);
+        }
+       },
+        error: function(msg){
+          console.log(msg.responseText)
+          var strings = msg.responseText.split(" ");
+          console.log(strings);
+          if(strings[0] == 'debuff'){
+              //Set each picture in store to pirate
+              var elem = document.getElementsByClassName('image');
+              for(i=0; i < elem.length;i++){
+                  var e = elem[i];
+                  e.src = '/static/img/pirate-bay.jpg';
+              }
+              //Show message indicating how many seconds left off debuff
+             var div = document.createElement('div');
+             var a = document.createElement('a');
+             var p = document.createElement('p');
+             a.innerHTML = "&times";
+             a.className = "close";
+             a.setAttribute('data-dismiss','alert');
+             a.setAttribute('aria-label','close');
+             div.className = "alert alert-danger";
+             div.appendChild(a);
+             p.innerHTML = 
+            'You\'re items have been disabled for ' + strings[1] + ' more seconds!';
+             div.appendChild(p);
+             $('#hold').empty();
+             $('#hold').append(div);
+          }
 
         }
-      }
     })
   });
   /* Handles logic when debuff is bought*/
@@ -160,7 +208,21 @@ $(document).ready(function(){
       datatype:"json", 
 
       success: function(data){
-          console.log(data);
+          if(data.length == 0){
+            console.log("not enough money");
+            console.log(id);
+          }
+          else{
+          //Parse data from json
+          var cost = data['cost'];
+          var money = data['money'];
+          //find correct element to modify 
+          var hoverElem = event.target;
+          //update final values shown 
+          updateMoney(money);
+          updateCost(hoverElem,cost);
+          
+          }
         }
       })
     })
