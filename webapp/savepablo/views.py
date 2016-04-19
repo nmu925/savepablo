@@ -15,6 +15,8 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 import uuid
 import time
+from random import randint
+
 
 # Used to generate a one-time-use token to 
 from django.contrib.auth.tokens import default_token_generator
@@ -136,15 +138,15 @@ def getCost(item):
 #definines the initial cost to buy each debuff
 def getDebuffCost(item):
   if(item == 'pirate'):
-    return 100
+    return 10
   if(item == 'first'):
-    return 1000
+    return 10
   if(item == 'second'):
-    return 10000
+    return 10
   if(item == 'third'):
-    return 100000
+    return 10
   if(item == 'stop'):
-    return 1000000
+    return 10
 
 @login_required
 def bought(request):
@@ -297,6 +299,13 @@ def step(request):
 @login_required
 def mstep(request):
   user = MyUser.objects.get(user=request.user)
+  t = int(round(time.time())) - user.timeClick 
+  if((not user.canClick) and (t >= 30)):#check if users debuff has worn off  
+    user.canClick = True
+    user.timeClick = 0
+    user.save()
+  if(not user.canClick):
+    return HttpResponseBadRequest()
   user.mPoints += user.mMps
   user.save()
   data = {}
@@ -454,9 +463,17 @@ def unloadHelp(game):
         p2 = g.p2 
         p1.mPoints = 0
         p1.mMps = 1
+        p1.canClick = True
+        p1.canBuy = True
+        p1.time = 0
+        p1.timeClick = 0
         p1.opponent = None
         p2.mPoints = 0
         p2.mMps = 1
+        p2.canClick = True
+        p2.canBuy = True
+        p2.time = 0
+        p2.timeClick = 0
         p2.opponent = None 
         p1.save()
         p2.save() 
@@ -482,7 +499,11 @@ def unloadHelp(game):
 @transaction.atomic
 @login_required
 def unload(request):
+  #extra check 
   myuser = MyUser.objects.get(user=request.user)
+  myuser.mPoints = 0
+  myuser.mMps = 1
+  myuser.save() 
   game = Game.objects.filter(p1=myuser)
   game2 = Game.objects.filter(p2=myuser)
   unloadHelp(game)
@@ -518,14 +539,30 @@ def apply_debuff(request):
     t = int(round(time.time()))
     opp.time = t
     opp.save() 
-  '''elif(id == 'first'): 
-    continue;
+  elif(id == 'first'): 
+    opp.mPoints *= Decimal(.8)
+    opp.save()
   elif(id == 'second'): 
-    continue;
+    opp.mMps *= Decimal(.8)
+    opp.save()
   elif(id == 'third'): 
-    continue;
+    rand = randint(1,10)
+    if rand <= 8:
+      stole = opp.mPoints * Decimal(.2)
+      opp.mPoints *= Decimal(.8)
+      user.mPoints += stole
+      opp.save()
+      user.save()
+    else:
+      stole = user.mPoints * Decimal(.2)
+      user.mPoints *= Decimal(.8)
+      opp.mPoints += stole
+      opp.save()
+      user.save()
   elif(id == 'stop'): 
-    continue;'''
+      opp.canClick = False
+      opp.timeClick = int(round(time.time()))
+      opp.save() 
   return HttpResponse()
 
 #Handles visual updates and logic checks for buying a debuff 

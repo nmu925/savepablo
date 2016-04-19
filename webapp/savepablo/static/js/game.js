@@ -8,7 +8,7 @@ function getCSRFToken() {
     return "unknown";
 }
 
-
+var updateID,gameID; 
 function updateMPS(num){
   var t = document.getElementById('mps'); 
   t.innerHTML = num;
@@ -49,6 +49,29 @@ function updateCost(elem,cost){
   pC.innerHTML = cost;
 }
 
+//Disables all clicking for 30 seconds
+function disableClicking(){
+  clearInterval(updateID);
+  clearInterval(oppID);
+  var block = document.createElement('div')
+  block.id = 'cover'
+  block.style.backgroundColor = "#ff0000";
+  block.style.bottom = '0';
+  block.style.left = '0';
+  block.style.position = 'fixed';
+  block.style.right = '0';
+  block.style.top = '0';
+  $('body').append(block);
+  $('#cover').css('opacity','0.2');
+  //reset intervals after 30 seconds
+  setTimeout(function(){
+    $('#cover').remove();
+    updateID = setInterval(updateGame(),1000);
+    gameID = setInterval(getOpp(),1000);
+  
+  },30000);
+}
+
 
 //Sends ajax request to server, to update money every second
 function updateGame(){
@@ -61,9 +84,13 @@ function updateGame(){
     datatype:"json",
 
     success:function(state){
-        updateMoney(state['money']);
-     }
-
+      updateMoney(state['money']);
+     },
+    error:function(state){
+      console.log("disable clicking"); 
+      disableClicking();  
+          
+    }
     })
 }
 function getOpp(){
@@ -230,5 +257,5 @@ $(document).ready(function(){
 
 });
 //Temporary interval times for now, may need to decrease time
-setInterval(updateGame,1000);
-setInterval(getOpp,1000);
+updateID = setInterval(updateGame,1000);
+oppID = setInterval(getOpp,1000);

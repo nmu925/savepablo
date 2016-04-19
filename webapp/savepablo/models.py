@@ -15,6 +15,8 @@ class MyUser(models.Model):
   mMps = models.DecimalField(max_digits=100,decimal_places=1,default=1)
   canBuy = models.BooleanField(default=1)
   time = models.IntegerField(default=0)
+  canClick = models.BooleanField(default=1)
+  timeClick = models.IntegerField(default=0)
 
 
 
