@@ -66,13 +66,27 @@ function disableClicking(){
   //reset intervals after 30 seconds
   setTimeout(function(){
     $('#cover').remove();
-    updateID = setInterval(updateGame(),1000);
-    gameID = setInterval(getOpp(),1000);
+    updateID = setInterval(updateGame,1000);
+    gameID = setInterval(getOpp,1000);
   
   },30000);
 }
-
-
+//Appends message to alerts
+function appendMessage(message,id){
+   var div = document.createElement('div');
+   var a = document.createElement('a');
+   var p = document.createElement('p');
+   a.innerHTML = "&times";
+   a.className = "close";
+   a.setAttribute('data-dismiss','alert');
+   a.setAttribute('aria-label','close');
+   div.className = "alert alert-danger";
+   div.appendChild(a);
+   p.innerHTML = message  
+   div.appendChild(p);
+   $(id).empty();
+   $(id).append(div);
+}
 //Sends ajax request to server, to update money every second
 function updateGame(){
     $.ajax({
@@ -85,11 +99,25 @@ function updateGame(){
 
     success:function(state){
       updateMoney(state['money']);
+      if(state['first'] == '1'){
+        console.log('in here');
+        $('#hold2').empty();
+        appendMessage("You lost money!","#hold2")
+      }
+      if(state['second'] == '1'){
+        $('#hold2').empty();
+        appendMessage("You lost MPS!","#hold2")
+      }
+      if(state['third'] == '1'){
+        $('#hold2').empty();
+        appendMessage("Your money got stolen!","#hold2") 
+      }
+
      },
     error:function(state){
-      console.log("disable clicking"); 
-      disableClicking();  
-          
+      if(state.responseText == 'canClick'){
+        disableClicking();  
+      }
     }
     })
 }
@@ -169,7 +197,7 @@ $(document).ready(function(){
               elem[1].src = '/static/img/kim k.jpg'
               elem[2].src = '/static/img/tidal.jpg'
               elem[3].src = '/static/img/gofundme.png'
-              elem[4].src = '/static/img/mark z .jpq'
+              elem[4].src = '/static/img/mark z .jpg'
         }
         // Not enough money to buy
         if(data.length == 0){
@@ -194,6 +222,7 @@ $(document).ready(function(){
           console.log(msg.responseText)
           var strings = msg.responseText.split(" ");
           console.log(strings);
+          //If error is due to debuff
           if(strings[0] == 'debuff'){
               //Set each picture in store to pirate
               var elem = document.getElementsByClassName('image');
@@ -202,20 +231,8 @@ $(document).ready(function(){
                   e.src = '/static/img/pirate-bay.jpg';
               }
               //Show message indicating how many seconds left off debuff
-             var div = document.createElement('div');
-             var a = document.createElement('a');
-             var p = document.createElement('p');
-             a.innerHTML = "&times";
-             a.className = "close";
-             a.setAttribute('data-dismiss','alert');
-             a.setAttribute('aria-label','close');
-             div.className = "alert alert-danger";
-             div.appendChild(a);
-             p.innerHTML = 
-            'You\'re items have been disabled for ' + strings[1] + ' more seconds!';
-             div.appendChild(p);
-             $('#hold').empty();
-             $('#hold').append(div);
+              var mess ='You\'re items have been disabled for ' + strings[1] + ' more seconds!';
+              appendMessage(mess,'#hold'); 
           }
 
         }

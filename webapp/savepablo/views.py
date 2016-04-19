@@ -305,11 +305,27 @@ def mstep(request):
     user.timeClick = 0
     user.save()
   if(not user.canClick):
-    return HttpResponseBadRequest()
+    return HttpResponseBadRequest('canClick')
   user.mPoints += user.mMps
   user.save()
   data = {}
   data['money'] = str(user.mPoints)
+  data['first'] = '0'
+  data['second'] = '0'
+  data['third'] = '0'
+  if(user.first):
+    data['first'] = '1'
+    user.first = False
+    user.save()
+  if(user.second):
+    data['second'] = '1'
+    user.second = False
+    user.save()
+  if(user.third):
+    data['third'] = '1'
+    user.third = False
+    user.save() 
+
   return HttpResponse(json.dumps(data),content_type='application/json')
 
 #returns to multiplayer home
@@ -540,20 +556,24 @@ def apply_debuff(request):
     opp.time = t
     opp.save() 
   elif(id == 'first'): 
+    opp.first = True
     opp.mPoints *= Decimal(.8)
     opp.save()
   elif(id == 'second'): 
+    opp.second = True
     opp.mMps *= Decimal(.8)
     opp.save()
-  elif(id == 'third'): 
+  elif(id == 'third'):
     rand = randint(1,10)
     if rand <= 8:
+      opp.third = True
       stole = opp.mPoints * Decimal(.2)
       opp.mPoints *= Decimal(.8)
       user.mPoints += stole
       opp.save()
       user.save()
     else:
+      user.third = True
       stole = user.mPoints * Decimal(.2)
       user.mPoints *= Decimal(.8)
       opp.mPoints += stole

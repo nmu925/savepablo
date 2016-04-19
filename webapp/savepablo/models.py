@@ -17,6 +17,10 @@ class MyUser(models.Model):
   time = models.IntegerField(default=0)
   canClick = models.BooleanField(default=1)
   timeClick = models.IntegerField(default=0)
+  first = models.BooleanField(default = 0)
+  second = models.BooleanField(default = 0)
+  third = models.BooleanField(default = 0)
+
 
 
 
