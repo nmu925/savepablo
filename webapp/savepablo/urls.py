@@ -43,6 +43,7 @@ urlpatterns = [
     url(r'^unload$',views.unload,name='unload'),
     url(r'^$', views.home, name = 'home'),
     url(r'^getBoard$', views.getBoard, name='getBoard'),
+    url(r'^getFam$', views.getFam, name='getFam'),
     url(r'^search$', views.search, name='search'),
     url(r'^debuff$',views.debuff,name='debuff'),
     url(r'^friend/(?P<id>\d+)$', views.friend, name='friend'),

@@ -87,14 +87,9 @@
       </ol>
       </h1>
       <h1 class="header">Fam</h1>
-      {% for friend in friends %}
-      <div style="padding-bottom: 10px">
-      <a href="{% url 'link2' friend.id %}">{{friend.username}}</a>
-      <div class="btn-group btn-group-xs" role="group" style="padding-left: 60px">
-        <a href="{% url 'unfriend' friend.id %}" class="btn btn-warning" type="submit" value="Unfriend">Unfriend</a>
-      </div>
-      </div>
-      {% endfor %}
+      <ul id="fam">
+
+      </ul>
     </div>
     {% endblock %}
   </div>

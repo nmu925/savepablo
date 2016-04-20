@@ -47,7 +47,6 @@ def home(request):
 @login_required
 def getBoard(request):
   context = {}
-  # context['me'] = MyUser.objects.get(user=request.user)
   players = list(MyUser.objects.order_by('-points')[:20]) #only get top 20 players
   names = []
   for p in players:
@@ -59,13 +58,27 @@ def getBoard(request):
     context['form'] = SearchForm()
     context['player'] = request.user.get_username()
     me = MyUser.objects.get(user=request.user)
-    temp=me.friends
-    friends=[]
-    for f in temp:
-      friends.append(f.user)
-    context['friends'] = friends
     return render(request, "home.html", context)
   
+@login_required
+def getFam(request):
+  context={}
+  me = MyUser.objects.get(user=request.user)
+  names=[]
+  ids=[]
+  for f in list(me.friends.all()):
+    names.append(f.user.get_username())
+    ids.append(f.user.id)
+  jsonD = json.dumps({'names':names, 'ids':ids})
+  if request.method=='GET':
+    return HttpResponse(jsonD, content_type='application/json')
+  else:
+    context['form'] = SearchForm()
+    context['player'] = request.user.get_username()
+    me = MyUser.objects.get(user=request.user)
+
+    return render(request, "home.html", context)
+
 @transaction.atomic
 def register(request):
   context = {}
