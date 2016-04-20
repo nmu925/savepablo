@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'webapp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.msyql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'savepablo',
 	'USER': 'ROOT',
 	'PASSWORD': 'mujob'
