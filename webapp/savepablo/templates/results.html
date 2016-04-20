@@ -16,9 +16,11 @@
       <td>
 		<a href="{% url 'link2' user.id %}">{{user.username}}</a>
 	  </td>
+	  {% if user.username != me %}
 	  <td>
 		<a href="{% url 'unfriend' user.id %}" class="btn btn-warning" type="submit" value="Unfriend">Unfriend</a>
 	  </td>
+	  {% endif %}
 	  </tr>
 	{% endfor %}
     {% for user in nonfriends %}
@@ -26,9 +28,11 @@
 	<td>
 		<a href="{% url 'link2' user.id %}">{{user.username}}</a> 
 	</td>
+	{% if user.username != me %}
 	<td>
 		<a href="{% url 'friend' user.id %}" class="btn btn-primary" type="submit" value="Friend">Friend</a>
 	</td>
+	{% endif %}
 	</tr>
 	{% endfor %}
     </tbody>
