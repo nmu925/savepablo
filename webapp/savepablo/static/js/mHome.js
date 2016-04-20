@@ -85,6 +85,7 @@ function pingServer2(){
 
 
 $(document).ready(function(){
+  $('#quote').slideDown(2000);
   if($('#inv').text() == "yes"){
     keepSearching = true; 
     $('#invite').hide();
