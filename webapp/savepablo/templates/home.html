@@ -89,6 +89,7 @@
       <h1 class="header">Fam</h1>
       {% for friend in friends %}
       <a href="{% url 'link2' friend.id %}">{{friend.username}}</a>
+      <a href="{% url 'unfriend' friend.id %}" class="btn btn-warning" type="submit" value="Unfriend">Unfriend</a>
       {% endfor %}
     </div>
     {% endblock %}
