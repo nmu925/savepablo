@@ -34,7 +34,7 @@ def home(request):
   user.queued = False
   user.mPoints = 0;
   user.mMps = 1; 
-  user.mWon = False;
+  user.mWon = 0;
   user.save()
  #delete any existing games that the user is in,although the user should not be inany eixsting games
   filt = Game.objects.filter(p1=user)
@@ -361,8 +361,8 @@ def mstep(request):
   b = user.points >= 1000000
   opp = user.opponent
   if b:
-    user.mWon = True
-    opp.mWon = False
+    user.mWon = 2
+    opp.mWon = 1
     user.save()
     opp.save()
 
@@ -473,7 +473,7 @@ def launch(request):
 def getopp(request):
   user = MyUser.objects.get(user=request.user)
   opp = user.opponent
-  if(user.mWon == False and opp == None):
+  if(user.mWon == 1 and opp == None):
     return HttpResponseBadRequest("lost")
   if(opp == None):
     return HttpResponseBadRequest("disconnect")
