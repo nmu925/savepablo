@@ -327,7 +327,12 @@ def step(request):
   user.points += user.mps
   user.save()
   data = {}
+  b = user.points >= 53000000 and (not user.won)
+  if b:
+    user.won = True
+    user.save()
   data['money'] = str(user.points)
+  data['won'] = str(b)
   return HttpResponse(json.dumps(data),content_type='application/json')
 
 #increments points by mps for multi-player

@@ -9,22 +9,37 @@ function getCSRFToken() {
 }
 
 var updateID,gameID; 
+
+//Credit to http://stackoverflow.com/questions/9461621/how-to-format-a-number-as-2-5k-if-a-thousand-or-more-otherwise-900-in-javascrip
+function nFormatter(num) {
+     if (num >= 1000000000) {
+        return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+     }
+     if (num >= 1000000) {
+        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+     }
+     if (num >= 1000) {
+        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+     }
+     return num;
+}
 function updateMPS(num){
   var t = document.getElementById('mps'); 
-  t.innerHTML = num;
+  t.innerHTML = nFormatter(num);
 }
 function updateMoney(num){
   var t = document.getElementById('money');
-  t.innerHTML = num;
+  t.innerHTML = nFormatter(num);
+
 } 
 
 function set_oMps(num){
   var t = document.getElementById('oMps'); 
-  t.innerHTML = num;
+  t.innerHTML = nFormatter(num);
 }
 function set_oMoney(num){
   var t = document.getElementById('oMoney');
-  t.innerHTML = num;
+  t.innerHTML = nFormatter(num);
 } 
 function set_username(name){
   var t = document.getElementById('small');
@@ -39,8 +54,8 @@ function updateView(elem,count,cost){
   var oC = p.querySelector("#owned");
   var pC = p.querySelector("#price");
   //update final values shown 
-  oC.innerHTML = count;
-  pC.innerHTML = cost;
+  oC.innerHTML = nFormatter(count);
+  pC.innerHTML = nFormatter(cost);
 }
 //Update only cost element of an image elem, used for right column
 function updateCost(elem,cost){
@@ -49,7 +64,7 @@ function updateCost(elem,cost){
   var p = par.querySelector(".text");
   var pC = p.querySelector("#price");
   //update final values shown 
-  pC.innerHTML = cost;
+  pC.innerHTML = nFormatter(cost);
 }
 
 //Disables all clicking for 30 seconds

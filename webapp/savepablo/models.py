@@ -20,6 +20,7 @@ class MyUser(models.Model):
   first = models.BooleanField(default = 0)
   second = models.BooleanField(default = 0)
   third = models.BooleanField(default = 0)
+  won = models.BooleanField(default = 0)
 
 
 
