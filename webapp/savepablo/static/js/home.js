@@ -85,7 +85,7 @@ function updateFam() {
         div.style.paddingLeft = '60px';
 
         var a = document.createElement('a');
-        a.href = "/savepablo/link2/id"
+        a.href = "/savepablo/link2/" + id
         a.innerHTML=n;
 
         var button = document.createElement('a');
