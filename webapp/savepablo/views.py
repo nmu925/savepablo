@@ -419,7 +419,7 @@ def launch(request):
   context['form'] = SearchForm()
   myuser = MyUser.objects.get(user=request.user)
   if(myuser.opponent == None):
-    return HttpResponse('opponent is None wtf please')
+    return HttpResponse('Invalid Multiplayer Game')
   context['opponent'] = myuser.opponent.user.get_username()
   context['player'] = request.user.get_username()
   return render(request,'game.html',context)
@@ -497,7 +497,7 @@ def link2(request, id):
   """ % (link)
   send_mail(subject="Invite to play Save Pablo from "+request.user.get_username(),
             message= email_body,
-            from_email="skitahar@andrew.cmu.edu",
+            from_email="nhmu@andrew.cmu.edu",
             recipient_list=[opp.email])
   context={}
   context['invite'] = "yes"
@@ -520,11 +520,7 @@ def invite(request,id):
   p2.save() 
   game.p2 = p2
   game.save()
-  context={}
-  context['form'] = SearchForm()
-  context['opponent'] = p1.user.get_username()
-  context['player'] = request.user.get_username()
-  return render(request,'game.html',context)
+  return redirect(reverse('launch'))
 
 @transaction.atomic
 @login_required
