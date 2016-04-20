@@ -31,8 +31,6 @@ function updateMoney(num){
   var t = document.getElementById('money');
   t.innerHTML = nFormatter(num);
 
-  t.innerHTML = num;
-
   //player reached $53 million!
   if(num >= 53000000) {
     window.location.replace("/savepablo/congrats");
@@ -46,7 +44,6 @@ function set_oMps(num){
 function set_oMoney(num){
   var t = document.getElementById('oMoney');
   t.innerHTML = nFormatter(num);
-  t.innerHTML = num;
 
   //opponent reached $53 million
   if(num >= 53000000) {
