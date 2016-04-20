@@ -100,7 +100,6 @@ function updateGame(){
     success:function(state){
       updateMoney(state['money']);
       if(state['first'] == '1'){
-        console.log('in here');
         $('#hold2').empty();
         appendMessage("You lost money!","#hold2")
       }
@@ -139,7 +138,17 @@ function getOpp(){
     })
 
 }
+function applyCooldown(cd,id){
+  console.log(cd + " " + cd);
 
+  $('#' + id).hide(100,function(){
+    $('#' + id).fadeIn(cd * 1000); 
+  }); 
+  
+
+
+
+}
 $(document).ready(function(){
 
   //Sends ajax request to remove Games with the user as a player. 
@@ -243,7 +252,10 @@ $(document).ready(function(){
 
     var hoverElem = event.target;
     var id = hoverElem.id;
-
+    //Prevent clicking on image while on cooldown
+    if($('#'+id).is(':animated')){
+      return; 
+    }
     $.ajax({
       url: "/savepablo/debuff",
       
@@ -261,12 +273,13 @@ $(document).ready(function(){
           //Parse data from json
           var cost = data['cost'];
           var money = data['money'];
+          var cd = data['cd'];
           //find correct element to modify 
           var hoverElem = event.target;
           //update final values shown 
           updateMoney(money);
           updateCost(hoverElem,cost);
-          
+          applyCooldown(cd,id)
           }
         }
       })

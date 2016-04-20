@@ -148,6 +148,19 @@ def getDebuffCost(item):
   if(item == 'stop'):
     return 10
 
+#defins the cooldowns for each debuff
+def getCooldown(item):
+  if(item == 'pirate'):
+    return 20
+  if(item == 'first'):
+    return 10
+  if(item == 'second'):
+    return 10
+  if(item == 'third'):
+    return 10
+  if(item == 'stop'):
+    return 30
+
 @login_required
 def bought(request):
   user = MyUser.objects.get(user=request.user)
@@ -591,21 +604,24 @@ def debuff(request):
   user = MyUser.objects.get(user=request.user)
   opp = user.opponent
   id = request.POST['id']
+  t = int(round(time.time()))
   data = {}
   if(not(id == 'pirate' or id == 'first' or id =='second' or id =='third' or id =='stop')):
     #Invalid items bought, return bad request
     return HttpResponseBadRequest()
-
+  #get cooldown of item 
+  diff = getCooldown(id)
   #Fetch item, update count 
   try:
     #update item
     owned = Debuff.objects.get(user=request.user,name=id)
     #check if item can be bought
-    if(not(owned.cost <= user.mPoints)):
+    if(not(owned.cost <= user.mPoints) and (t - owned.time >= diff)):
       return HttpResponse()
 
     ogCost = owned.cost
-    owned.cost = owned.cost * Decimal(1.5) 
+    owned.cost = owned.cost * Decimal(1.5)
+    owned.time = t
     owned.save()
     #update user mps
     user.mPoints = user.mPoints - ogCost
@@ -614,6 +630,7 @@ def debuff(request):
     data['id'] = str(id)
     data['cost'] = str(owned.cost)
     data['money'] = str(user.mPoints)
+    data['cd'] = str(diff)
     jsonD = json.dumps(data)
     apply_debuff(request)#execute debuff
     return HttpResponse(jsonD,content_type='application/json')
@@ -625,7 +642,7 @@ def debuff(request):
     #check if item can be bought
     if not(ogCost <= user.mPoints):
       return HttpResponse()
-    new = Debuff(name=id,cost=costNew,user=request.user)
+    new = Debuff(name=id,cost=costNew,user=request.user,time=t)
     new.save()
     #update user points
     user.mPoints = user.mPoints - ogCost
@@ -634,6 +651,7 @@ def debuff(request):
     data['id'] = str(id)
     data['cost'] = str(costNew)
     data['money'] = str(user.mPoints)
+    data['cd'] = str(diff)
     jsonD = json.dumps(data)
     apply_debuff(request)#execute debuff
     return HttpResponse(jsonD,content_type='application/json')

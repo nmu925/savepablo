@@ -71,4 +71,5 @@ class Debuff(models.Model):
   name = models.CharField(max_length = 20)
   cost = models.DecimalField(max_digits=100,decimal_places=1,default=0)
   user = models.ForeignKey(User)
+  time = models.IntegerField(default = 0) 
 
