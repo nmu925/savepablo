@@ -50,6 +50,29 @@ function updateLeaderboard() {
   });
 }
 
+function updateFam() {
+  $.ajax({
+    url: "/savepablo/getFam",
+    type: "GET",
+    datatype:"json",
+    success:function(state){
+      $("ul#fam").empty();
+      var padding = "<div style='padding-bottom: 10px'>";
+      for(var i = 0; i < state.names.length; i++){
+        var n = state.names[i];
+        var id = state.ids[i];
+        var href = "<a href='{% url 'link2'"+id+"%}'>"+n+"</a>";
+        var div = "<div class='btn-group btn-group-xs' role='group' style='padding-left:60px'>"
+        var button = "<a href='{% url 'unfriend'"+id+"%}' class='btn btn-warning' type='submit'>Unfriend</a>"
+        $("ul#fam").append("<li>"+padding+href+div+button+"</div></div></li>");
+      }
+    },
+    error: function(xhr, textStatus, errorThrown){
+       console.log(textStatus+ ' - request failed: '+errorThrown);
+    }
+  });
+}
+
 //Sends ajax request to server, to update money every second
 function updateGame(){
     $.ajax({
@@ -80,6 +103,7 @@ $(document).ready(function(){
 
     success:function(state){
       updateLeaderboard();
+      updateFam();
 
       for(var i = 0; i < state.length; i++){
         var obj = state[i];
@@ -163,3 +187,4 @@ $(document).ready(function(){
 
 setInterval(updateGame,1000)
 setInterval(updateLeaderboard, 1000)
+setInterval(updateFam, 2000)
