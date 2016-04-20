@@ -82,8 +82,10 @@ WSGI_APPLICATION = 'webapp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'savepablo',
+	'USER': 'root',
+	'PASSWORD': 'mujob'
     }
 }
 
@@ -109,7 +111,7 @@ STATIC_URL = '/static/'
 
 #email
 config = ConfigParser.ConfigParser()
-config.read("config.ini")
+config.read(BASE_DIR + "/config.ini")
 
 # EMAIL_HOST = os.environ['EMAIL_HOST']
 # EMAIL_PORT = os.environ['EMAIL_PORT']
