@@ -28,7 +28,7 @@ function sendReadyBegin(){
     error:function(state){
       //We recieve an error if we cannot find a match
       //We can simply call the function again until we get a success
-      setTimeout(sendReadyBegin,500);
+      setTimeout(sendReadyBegin,250);
     }
 
     })
@@ -75,7 +75,7 @@ function pingServer2(){
       error:function(state){
         //We recieve an error if we cannot find a match
         //We can simply call the function again until we get a success
-        setTimeout(pingServer2,500);
+        setTimeout(pingServer2,250);
         
       }
 

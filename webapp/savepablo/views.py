@@ -34,6 +34,7 @@ def home(request):
   user.queued = False
   user.mPoints = 0;
   user.mMps = 1; 
+  user.mWon = False;
   user.save()
  #delete any existing games that the user is in,although the user should not be inany eixsting games
   filt = Game.objects.filter(p1=user)
@@ -357,6 +358,14 @@ def step(request):
 def mstep(request):
   user = MyUser.objects.get(user=request.user)
   t = int(round(time.time())) - user.timeClick 
+  b = user.points >= 1000000
+  opp = user.opponent
+  if b:
+    user.mWon = True
+    opp.mWon = False
+    user.save()
+    opp.save()
+
   if((not user.canClick) and (t >= 30)):#check if users debuff has worn off  
     user.canClick = True
     user.timeClick = 0
@@ -464,6 +473,8 @@ def launch(request):
 def getopp(request):
   user = MyUser.objects.get(user=request.user)
   opp = user.opponent
+  if(user.mWon == False and opp == None):
+    return HttpResponseBadRequest("lost")
   if(opp == None):
     return HttpResponseBadRequest("disconnect")
 
@@ -582,6 +593,7 @@ def unloadHelp(game):
         p1.canBuy = True
         p1.time = 0
         p1.timeClick = 0
+        p1.mWon = False
         p1.opponent = None
         p2.mPoints = 0
         p2.mMps = 1
@@ -589,6 +601,7 @@ def unloadHelp(game):
         p2.canBuy = True
         p2.time = 0
         p2.timeClick = 0
+        p2.mWon = False
         p2.opponent = None 
         p1.save()
         p2.save() 

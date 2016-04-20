@@ -32,7 +32,7 @@ function updateMoney(num){
   t.innerHTML = nFormatter(num);
 
   //player reached $53 million!
-  if(num >= 53000000) {
+  if(num >= 1000000) {
     window.location.replace("/savepablo/congrats");
   }
 } 
@@ -46,7 +46,7 @@ function set_oMoney(num){
   t.innerHTML = nFormatter(num);
 
   //opponent reached $53 million
-  if(num >= 53000000) {
+  if(num >= 1000000) {
     window.location.replace("/savepablo/lose")
   }
 } 
@@ -164,6 +164,10 @@ function getOpp(){
         set_oMoney(money)
      },
     error:function(state){
+     if(state.responseText == 'lost'){
+         window.location.replace("/savepablo/lose")
+     }     
+
       if(state.responseText == 'disconnect'){
         clearInterval(updateID);
         clearInterval(oppID);
