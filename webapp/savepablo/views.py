@@ -766,3 +766,9 @@ def unfriend(request, id):
   context['form'] = SearchForm()
   remove.friends.remove(me)
   return render(request, "home.html", context)
+
+@login_required
+def congrats(request):
+  context = {}
+  context['player'] = request.user.get_username()
+  return render(request, "celebration.html", context)

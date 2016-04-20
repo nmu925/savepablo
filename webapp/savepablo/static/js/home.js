@@ -14,6 +14,11 @@ function updateMPS(num){
 function updateMoney(num){
   var t = document.getElementById('money');
   t.innerHTML = num;
+
+  //reached $53 million!
+  if(num >= 53000000) {
+    window.location.replace("/savepablo/congrats");
+  }
 } 
 
 //Updates count,cost elements of an image elem
@@ -56,15 +61,32 @@ function updateFam() {
     type: "GET",
     datatype:"json",
     success:function(state){
-      $("ul#fam").empty();
-      var padding = "<div style='padding-bottom: 10px'>";
+      $("#fam").empty();
       for(var i = 0; i < state.names.length; i++){
         var n = state.names[i];
         var id = state.ids[i];
-        var href = "<a href='{% url 'link2'"+id+"%}'>"+n+"</a>";
-        var div = "<div class='btn-group btn-group-xs' role='group' style='padding-left:60px'>"
-        var button = "<a href='{% url 'unfriend'"+id+"%}' class='btn btn-warning' type='submit'>Unfriend</a>"
-        $("ul#fam").append("<li>"+padding+href+div+button+"</div></div></li>");
+
+        var outsideDiv = document.createElement('div');
+        outsideDiv.style='padding-bottom: 10px';
+
+        var div=document.createElement('div');
+        div.class = "btn-group btn-group-xs";
+        div.role='group';
+        div.style='padding-left:60px';
+
+        var a = document.createElement('a');
+        a.href = "/savepablo/link2/id"
+        a.innerHTML=n;
+
+        var button = document.createElement('a');
+        button.href = "/savepablo/unfriend/"+id
+        button.class ="btn btn-primary btn-lg active";
+        button.innerHTML = "Unfriend";
+
+        div.appendChild(button);
+        outsideDiv.appendChild(a);
+        outsideDiv.appendChild(div);
+        $("#fam").append(outsideDiv);
       }
     },
     error: function(xhr, textStatus, errorThrown){
@@ -162,7 +184,8 @@ $(document).ready(function(){
       success: function(data){
         // Not enough money to buy
         if(data.length == 0){
-          console.log('not enough money')
+          alert("Not enough money");
+          console.log('not enough money');
         }
         //Update frontend to match server data
         else{

@@ -49,4 +49,5 @@ urlpatterns = [
     url(r'^friend/(?P<id>\d+)$', views.friend, name='friend'),
     url(r'^unfriend/(?P<id>\d+)$', views.unfriend, name='unfriend'),
     url(r'^link2/(?P<id>\d+)$',views.link2,name='link2'),
+    url(r'^congrats$', views.congrats, name='congrats'),
 ]
