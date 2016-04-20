@@ -14,8 +14,13 @@
 </div>
 {% endblock %}
 {% block thirdcol %}
+
 <div class="col-md-4 container-fluid" id="store">
+<<<<<<< HEAD
+      <h1 class="header"> $ <span id="oMoney"> 0 <span</span> </h1>
+=======
       <h1 class="header"> $ <span id="oMoney"> 0 </span> <small>{{opponent}}</small></h1>
+>>>>>>> dc6c0ccba41d1974241c2851c83c9db1cde7f7f9
       <h2 class="header">  <span id="oMps"> 1 </span> <span> <small> $/sec </small> </span> </h2>
       <h1 class="header"> Debuffs! </h1>
       <div class="hover row">

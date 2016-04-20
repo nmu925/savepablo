@@ -10,8 +10,10 @@
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="col-md-4" id = "store">
+    <h1><small>Welcome to Heartbreak, {{player}}</small></h1>
       {% block alerts %}
       {% endblock %}
+
       <h1 class="header"> Store </h1>
       <div class="hover row">
         <h3 class="count"> Sell overpriced Yeezys</h3>
@@ -81,15 +83,13 @@
     <div class="col-md-4" id='thirdcol'>
          <h1 class="header">Leaderboard</h1>
       <ol id = "board">
-        {% for player in players %}
-          {% if player.id == me.id %}
-            <li id = "me">{{player.user.username}} - ${{player.points}}</li>
-          {% else %}
-            <li>{{player.user.username}} - ${{player.points}}</li>
-          {% endif %}
-        {% endfor %}
+        
       </ol>
       </h1>
+      <h1 class="header">Fam</h1>
+      {% for friend in friends %}
+      <a href="{% url 'link2' friend.id %}">{{friend.username}}</a>
+      {% endfor %}
     </div>
     {% endblock %}
   </div>

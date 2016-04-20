@@ -14,10 +14,16 @@ from decimal import *
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 import uuid
+import time
+from random import randint
+
 
 # Used to generate a one-time-use token to 
 from django.contrib.auth.tokens import default_token_generator
-# Create your views here.
+
+#Used to send mail from within Django
+from django.core.mail import send_mail
+
 
 @login_required
 def home(request):
@@ -29,10 +35,13 @@ def home(request):
   user.queued = False
   user.save()
 
-  context['players'] = MyUser.objects.all().order_by('-points')[:50] #only get top 50 players
-  context['me'] = user
+  context['player'] = user.user.get_username()
 
-  context['friends'] = MyUser.objects.all()
+  temp = list(user.friends.all())
+  friends = []
+  for f in temp:
+    friends.append(f.user)
+  context['friends'] = friends
 
   context['form'] = SearchForm()
   return render(request,'home.html',context)
@@ -41,12 +50,22 @@ def home(request):
 def getBoard(request):
   context = {}
   # context['me'] = MyUser.objects.get(user=request.user)
-  players = list(MyUser.objects.all().order_by('-points')[:50]) #only get top 50 players
-  jsonD = serializers.serialize('json',players)
+  players = list(MyUser.objects.order_by('-points')[:20]) #only get top 20 players
+  names = []
+  for p in players:
+    names.append(str(p.user.get_username())+ " - $" + str(p.points))
+  jsonD = json.dumps({"players": names})
   if request.method == "GET":
     return HttpResponse(jsonD,content_type='application/json')
   else:
     context['form'] = SearchForm()
+    context['player'] = request.user.get_username()
+    me = MyUser.objects.get(user=request.user)
+    temp=me.friends
+    friends=[]
+    for f in temp:
+      friends.append(f.user)
+    context['friends'] = friends
     return render(request, "home.html", context)
   
 @transaction.atomic
@@ -66,7 +85,8 @@ def register(request):
   new_user = User.objects.create_user(username=form.cleaned_data['user_name'],
                                      password=form.cleaned_data['password1'],
                                     first_name=form.cleaned_data['first_name'],
-                                   last_name=form.cleaned_data['last_name'])
+                                   last_name=form.cleaned_data['last_name'],
+                                   email = form.cleaned_data['email'])
 
   new_user.save()
   inst = MyUser(user = new_user)
@@ -127,6 +147,31 @@ def getCost(item):
     return 1000
   if(item == 'mark'):
     return 10000
+#definines the initial cost to buy each debuff
+def getDebuffCost(item):
+  if(item == 'pirate'):
+    return 10
+  if(item == 'first'):
+    return 10
+  if(item == 'second'):
+    return 10
+  if(item == 'third'):
+    return 10
+  if(item == 'stop'):
+    return 10
+
+#defins the cooldowns for each debuff
+def getCooldown(item):
+  if(item == 'pirate'):
+    return 20
+  if(item == 'first'):
+    return 10
+  if(item == 'second'):
+    return 10
+  if(item == 'third'):
+    return 10
+  if(item == 'stop'):
+    return 30
 
 @login_required
 def bought(request):
@@ -186,10 +231,19 @@ def bought(request):
     jsonD = json.dumps(data)
     return HttpResponse(jsonD,content_type='application/json')
 
-
+#multiplayer buy items handler
 @login_required
 def mbought(request):
+
   user = MyUser.objects.get(user=request.user)
+  t = int(round(time.time())) - user.time
+  
+  if((not user.canBuy) and (t >= 20)):#check if users debuff has worn off  
+    user.canBuy = True
+    user.time = 0
+    user.save()
+  if(not user.canBuy):
+    return HttpResponseBadRequest("debuff " + str(20-t))
   id = request.POST['id']
   data = {}
   if(not(id == 'yeezy' or id == 'kim' or id =='tidal' or id =='gfm' or id =='mark')):
@@ -270,16 +324,46 @@ def step(request):
 @login_required
 def mstep(request):
   user = MyUser.objects.get(user=request.user)
+  t = int(round(time.time())) - user.timeClick 
+  if((not user.canClick) and (t >= 30)):#check if users debuff has worn off  
+    user.canClick = True
+    user.timeClick = 0
+    user.save()
+  if(not user.canClick):
+    return HttpResponseBadRequest('canClick')
   user.mPoints += user.mMps
   user.save()
   data = {}
   data['money'] = str(user.mPoints)
+  data['first'] = '0'
+  data['second'] = '0'
+  data['third'] = '0'
+  if(user.first):
+    data['first'] = '1'
+    user.first = False
+    user.save()
+  if(user.second):
+    data['second'] = '1'
+    user.second = False
+    user.save()
+  if(user.third):
+    data['third'] = '1'
+    user.third = False
+    user.save() 
+
   return HttpResponse(json.dumps(data),content_type='application/json')
 
 #returns to multiplayer home
 @login_required
 def mHome(request):
-  return render(request,'mHome.html',{SearchForm()})
+<<<<<<< HEAD
+  context={}
+  context['form'] = SearchForm()
+  context['invite'] = "no"
+  return render(request,'mHome.html',context)
+=======
+  return render(request,'mHome.html',{'form':SearchForm()})
+>>>>>>> 2eb3667b8a1a1a3511955441ce827e68b87510d3
 
 @login_required
 @transaction.atomic
@@ -321,6 +405,8 @@ def ready(request):
 #Initialize game with players
 @login_required
 def game(request):
+    context = {}
+    context['form'] = SearchForm()
     user = MyUser.objects.get(user=request.user)
     opp = user.opponent
     #temp_opp = User.objects.get(username='test0')
@@ -329,16 +415,33 @@ def game(request):
     if(count == 0):
       game = Game(p1=user,p2=opp)
       game.save()
+<<<<<<< HEAD
+    context['opponent'] = opp.user.get_username()
+    context['player'] = request.user.get_username()
+    return render(request,'game.html',context)
+=======
 
-    return render(request,'game.html',{SearchForm()})
+    return render(request,'game.html',{'form':SearchForm()})
+>>>>>>> 2eb3667b8a1a1a3511955441ce827e68b87510d3
 
 #Initialize game with players
 @login_required
 def launch(request):
+<<<<<<< HEAD
+  context = {}
+  context['form'] = SearchForm()
+  myuser = MyUser.objects.get(user=request.user)
+  if(myuser.opponent == None):
+    return HttpResponse('opponent is None wtf please')
+  context['opponent'] = myuser.opponent.user.get_username()
+  context['player'] = request.user.get_username()
+  return render(request,'game.html',context)
+=======
     myuser = MyUser.objects.get(user=request.user)
     if(myuser.opponent == None):
-      return HttpResponse('opponent is None wtf please')
-    return render(request,'game.html',{SearchForm()})
+      return HttpResponse('Invalid multiplayer game')
+    return render(request,'game.html',{'form':SearchForm()})
+>>>>>>> 2eb3667b8a1a1a3511955441ce827e68b87510d3
 
 
 @login_required
@@ -373,12 +476,52 @@ def link(request):
   # Generate a one-time use token for creating html
   user = MyUser.objects.get(user=request.user)
   id = str(uuid.uuid4())
+  #delete any existing games that the user is in,although the user should not be inany eixsting games
+  filt = Game.objects.filter(p1=user)
+  filt2 = Game.objects.filter(p2=user)
+  if filt.exists():
+    for f in filt:
+      f.delete()
+  if filt2.exists():
+    for f in filt2:
+      f.delete()
+  #Create new game with unknown p2
   game = Game(uuid=id,p1=user,p2=None)
   game.save()
+
   link = """ http://%s%s
       """ % (request.get_host(), 
             reverse('invite', args=[id]))
   return HttpResponse(link)
+
+@transaction.atomic
+@login_required
+def link2(request, id):
+  opp = get_object_or_404(User, id=id)
+
+  # Generate a one-time use token for creating html
+  user = MyUser.objects.get(user=request.user)
+
+  gid = str(uuid.uuid4())
+  game = Game(uuid=gid,p1=user,p2=None)
+  game.save()
+
+  link = """ http://%s%s
+      """ % (request.get_host(), 
+            reverse('invite', args=[gid]))
+  email_body = """
+  You got invited to play multiplayer.  Please click the link below to
+  start saving Pablo:
+    %s
+  """ % (link)
+  send_mail(subject="Invite to play Save Pablo from "+request.user.get_username(),
+            message= email_body,
+            from_email="skitahar@andrew.cmu.edu",
+            recipient_list=[opp.email])
+  context={}
+  context['invite'] = "yes"
+  context['form'] = SearchForm()
+  return render(request, "mHome.html", context)
 
 @login_required
 @transaction.atomic
@@ -395,9 +538,18 @@ def invite(request,id):
   p1.save()
   p2.save() 
   game.p2 = p2
+<<<<<<< HEAD
+  game.save()
+  context={}
+  context['form'] = SearchForm()
+  context['opponent'] = p1.user.get_username()
+  context['player'] = request.user.get_username()
+  return render(request,'game.html',context)
+=======
   game.save() 
   
-  return render(request,'game.html',{SearchForm()})
+  return redirect(reverse('launch'))
+>>>>>>> 2eb3667b8a1a1a3511955441ce827e68b87510d3
 
 @transaction.atomic
 @login_required
@@ -409,53 +561,62 @@ def waitAccept(request):
     return HttpResponseBadRequest()
 
   return HttpResponse()
+#helper that reset database values
+def unloadHelp(game):
+    if game.exists():
+      for g in game:
+        p1 = g.p1
+        p2 = g.p2 
+        p1.mPoints = 0
+        p1.mMps = 1
+        p1.canClick = True
+        p1.canBuy = True
+        p1.time = 0
+        p1.timeClick = 0
+        p1.opponent = None
+        p2.mPoints = 0
+        p2.mMps = 1
+        p2.canClick = True
+        p2.canBuy = True
+        p2.time = 0
+        p2.timeClick = 0
+        p2.opponent = None 
+        p1.save()
+        p2.save() 
+        items1 = mItem.objects.filter(user=p1.user)
+        items2 = mItem.objects.filter(user=p2.user)
+        debuff1 = Debuff.objects.filter(user=p1.user)
+        debuff2 = Debuff.objects.filter(user=p2.user)
+        if items1.exists():
+          for item in items1:
+            item.delete()
+        if items2.exists():
+          for item in items2:
+            item.delete() 
+        if debuff1.exists():
+          for item in debuff1:
+            item.delete() 
+        if debuff2.exists():
+          for item in debuff2:
+            item.delete() 
+        g.delete()
 
+#reset database values when a multiplayer game is finished/terminated
 @transaction.atomic
 @login_required
 def unload(request):
+  #extra check 
   myuser = MyUser.objects.get(user=request.user)
+  myuser.mPoints = 0
+  myuser.mMps = 1
+  myuser.save() 
   game = Game.objects.filter(p1=myuser)
-  if game.exists():
-    for g in game:
-      p1 = g.p1
-      p2 = g.p2 
-      p1.mPoints = 0
-      p1.mMps = 1
-      p1.opponent = None
-      p2.mPoints = 0
-      p2.mMps = 1
-      p2.opponent = None 
-      p1.save()
-      p2.save() 
-      items1 = mItem.objects.filter(user=p1.user)
-      items2 = mItem.objects.filter(user=p2.user)
-      if items1.exists():
-        for item in items1:
-          item.delete()
-      if items2.exists():
-        for item in items2:
-          item.delete() 
-      g.delete()
+  game2 = Game.objects.filter(p2=myuser)
+  unloadHelp(game)
+  unloadHelp(game2)
   return HttpResponse() 
 
 @login_required
-<<<<<<< HEAD
-def debuff(request):
-  id = request.POST['id']
-  '''if(id == 'pirate'):
-    continue;
-  elif(id == 'first'): 
-    continue;
-  elif(id == 'second'): 
-    continue;
-  elif(id == 'third'): 
-    continue;
-  elif(id == 'stop'): 
-    continue;'''
-
-  return HttpResponse(request.POST['id'])
-
-=======
 @transaction.atomic
 def search(request):
   context = {}
@@ -467,10 +628,162 @@ def search(request):
     errors.append("Invalid form")
     return render(request,'results.html',context)
   name = form.cleaned_data['username']
-  users = User.objects.filter(username=name)
+  users = User.objects.filter(username__startswith=name)
   if len(list(users)) == 0:
     errors.append("No match for " + name + ". But Kanye still loves Kanye.")
-  context['users'] = users
+  friends = []
+  nonfriends=[]
+  me = MyUser.objects.get(user = request.user)
+  for u in users:
+    if me.friends.filter(user=u):
+      friends.append(u)
+    else:
+      nonfriends.append(u)
+  context['friends'] = friends
+  context['nonfriends'] = nonfriends
   context['errors'] = errors
   return render(request, 'results.html', context)
->>>>>>> 3a213685e9c62b5eb599e345435f16a158b0a7eb
+
+<<<<<<< HEAD
+@login_required
+def debuff(request):
+=======
+
+def apply_debuff(request):
+  user = MyUser.objects.get(user=request.user)
+  opp = user.opponent
+>>>>>>> 2eb3667b8a1a1a3511955441ce827e68b87510d3
+  id = request.POST['id']
+  if(id == 'pirate'):
+    opp.canBuy = False 
+    t = int(round(time.time()))
+    opp.time = t
+    opp.save() 
+  elif(id == 'first'): 
+    opp.first = True
+    opp.mPoints *= Decimal(.8)
+    opp.save()
+  elif(id == 'second'): 
+    opp.second = True
+    opp.mMps *= Decimal(.8)
+    opp.save()
+  elif(id == 'third'):
+    rand = randint(1,10)
+    if rand <= 8:
+      opp.third = True
+      stole = opp.mPoints * Decimal(.2)
+      opp.mPoints *= Decimal(.8)
+      user.mPoints += stole
+      opp.save()
+      user.save()
+    else:
+      user.third = True
+      stole = user.mPoints * Decimal(.2)
+      user.mPoints *= Decimal(.8)
+      opp.mPoints += stole
+      opp.save()
+      user.save()
+  elif(id == 'stop'): 
+      opp.canClick = False
+      opp.timeClick = int(round(time.time()))
+      opp.save() 
+  return HttpResponse()
+
+#Handles visual updates and logic checks for buying a debuff 
+@login_required
+def debuff(request):
+  user = MyUser.objects.get(user=request.user)
+  opp = user.opponent
+  id = request.POST['id']
+  t = int(round(time.time()))
+  data = {}
+  if(not(id == 'pirate' or id == 'first' or id =='second' or id =='third' or id =='stop')):
+    #Invalid items bought, return bad request
+    return HttpResponseBadRequest()
+  #get cooldown of item 
+  diff = getCooldown(id)
+  #Fetch item, update count 
+  try:
+    #update item
+    owned = Debuff.objects.get(user=request.user,name=id)
+    #check if item can be bought
+    if(not(owned.cost <= user.mPoints) and (t - owned.time >= diff)):
+      return HttpResponse()
+
+    ogCost = owned.cost
+    owned.cost = owned.cost * Decimal(1.5)
+    owned.time = t
+    owned.save()
+    #update user mps
+    user.mPoints = user.mPoints - ogCost
+    user.save()
+    #send data back to client
+    data['id'] = str(id)
+    data['cost'] = str(owned.cost)
+    data['money'] = str(user.mPoints)
+    data['cd'] = str(diff)
+    jsonD = json.dumps(data)
+    apply_debuff(request)#execute debuff
+    return HttpResponse(jsonD,content_type='application/json')
+
+  except ObjectDoesNotExist:
+    #create new item
+    ogCost = getDebuffCost(id)
+    costNew = ogCost * 1.5
+    #check if item can be bought
+    if not(ogCost <= user.mPoints):
+      return HttpResponse()
+    new = Debuff(name=id,cost=costNew,user=request.user,time=t)
+    new.save()
+    #update user points
+    user.mPoints = user.mPoints - ogCost
+    user.save() 
+    #send data back to client
+    data['id'] = str(id)
+    data['cost'] = str(costNew)
+    data['money'] = str(user.mPoints)
+    data['cd'] = str(diff)
+    jsonD = json.dumps(data)
+    apply_debuff(request)#execute debuff
+    return HttpResponse(jsonD,content_type='application/json')
+
+
+@login_required
+@transaction.atomic
+def friend(request, id):
+  context={}
+  me = MyUser.objects.get(user=request.user)
+  context['player'] = me.user.get_username()
+
+  friend = User.objects.get(id=id)
+  add = get_object_or_404(MyUser, user=friend)
+  me.friends.add(add)
+  me.save()
+  temp = me.friends.all()
+  friends = []
+  for f in list(temp):
+    friends.append(f.user)
+  context['friends'] = friends
+  context['form'] = SearchForm()
+  add.friends.add(me)
+  return render(request, "home.html", context)
+
+@login_required
+@transaction.atomic
+def unfriend(request, id):
+  context={}
+  me = MyUser.objects.get(user=request.user)
+  context['player'] = me.user.get_username()
+
+  friend = User.objects.get(id=id)
+  remove = get_object_or_404(MyUser, user=friend)
+  me.friends.remove(remove)
+  me.save()
+  temp = me.friends.all()
+  friends = []
+  for f in list(temp):
+    friends.append(f.user)
+  context['friends'] = friends
+  context['form'] = SearchForm()
+  remove.friends.remove(me)
+  return render(request, "home.html", context)

@@ -17,11 +17,11 @@ import uuid
 import time
 from random import randint
 
-
 # Used to generate a one-time-use token to 
 from django.contrib.auth.tokens import default_token_generator
-# Create your views here.
 
+#Used to send mail from within Django
+from django.core.mail import send_mail
 
 @login_required
 def home(request):
@@ -33,10 +33,13 @@ def home(request):
   user.queued = False
   user.save()
 
-  context['players'] = MyUser.objects.all().order_by('-points')[:50] #only get top 50 players
-  context['me'] = user
+  context['player'] = user.user.get_username()
 
-  context['friends'] = MyUser.objects.all()
+  temp = list(user.friends.all())
+  friends = []
+  for f in temp:
+    friends.append(f.user)
+  context['friends'] = friends
 
   context['form'] = SearchForm()
   return render(request,'home.html',context)
@@ -49,12 +52,18 @@ def getBoard(request):
   names = []
   for p in players:
     names.append(str(p.user.get_username())+ " - $" + str(p.points))
-  jsonP = serializers.serialize('json', players)
   jsonD = json.dumps({"players": names})
   if request.method == "GET":
     return HttpResponse(jsonD,content_type='application/json')
   else:
     context['form'] = SearchForm()
+    context['player'] = request.user.get_username()
+    me = MyUser.objects.get(user=request.user)
+    temp=me.friends
+    friends=[]
+    for f in temp:
+      friends.append(f.user)
+    context['friends'] = friends
     return render(request, "home.html", context)
   
 @transaction.atomic
@@ -74,7 +83,8 @@ def register(request):
   new_user = User.objects.create_user(username=form.cleaned_data['user_name'],
                                      password=form.cleaned_data['password1'],
                                     first_name=form.cleaned_data['first_name'],
-                                   last_name=form.cleaned_data['last_name'])
+                                   last_name=form.cleaned_data['last_name'],
+                                   email = form.cleaned_data['email'])
 
   new_user.save()
   inst = MyUser(user = new_user)
@@ -222,7 +232,6 @@ def bought(request):
 #multiplayer buy items handler
 @login_required
 def mbought(request):
-
   user = MyUser.objects.get(user=request.user)
   t = int(round(time.time())) - user.time
   
@@ -344,7 +353,10 @@ def mstep(request):
 #returns to multiplayer home
 @login_required
 def mHome(request):
-  return render(request,'mHome.html',{'form':SearchForm()})
+  context={}
+  context['form'] = SearchForm()
+  context['invite'] = "no"
+  return render(request,'mHome.html',context)
 
 @login_required
 @transaction.atomic
@@ -386,6 +398,8 @@ def ready(request):
 #Initialize game with players
 @login_required
 def game(request):
+    context = {}
+    context['form'] = SearchForm()
     user = MyUser.objects.get(user=request.user)
     opp = user.opponent
     #temp_opp = User.objects.get(username='test0')
@@ -394,16 +408,21 @@ def game(request):
     if(count == 0):
       game = Game(p1=user,p2=opp)
       game.save()
-
-    return render(request,'game.html',{'form':SearchForm()})
+    context['opponent'] = opp.user.get_username()
+    context['player'] = request.user.get_username()
+    return render(request,'game.html',context)
 
 #Initialize game with players
 @login_required
 def launch(request):
-    myuser = MyUser.objects.get(user=request.user)
-    if(myuser.opponent == None):
-      return HttpResponse('Invalid multiplayer game')
-    return render(request,'game.html',{'form':SearchForm()})
+  context = {}
+  context['form'] = SearchForm()
+  myuser = MyUser.objects.get(user=request.user)
+  if(myuser.opponent == None):
+    return HttpResponse('opponent is None wtf please')
+  context['opponent'] = myuser.opponent.user.get_username()
+  context['player'] = request.user.get_username()
+  return render(request,'game.html',context)
 
 
 @login_required
@@ -456,6 +475,35 @@ def link(request):
             reverse('invite', args=[id]))
   return HttpResponse(link)
 
+@transaction.atomic
+@login_required
+def link2(request, id):
+  opp = get_object_or_404(User, id=id)
+
+  # Generate a one-time use token for creating html
+  user = MyUser.objects.get(user=request.user)
+
+  gid = str(uuid.uuid4())
+  game = Game(uuid=gid,p1=user,p2=None)
+  game.save()
+
+  link = """ http://%s%s
+      """ % (request.get_host(), 
+            reverse('invite', args=[gid]))
+  email_body = """
+  You got invited to play multiplayer.  Please click the link below to
+  start saving Pablo:
+    %s
+  """ % (link)
+  send_mail(subject="Invite to play Save Pablo from "+request.user.get_username(),
+            message= email_body,
+            from_email="skitahar@andrew.cmu.edu",
+            recipient_list=[opp.email])
+  context={}
+  context['invite'] = "yes"
+  context['form'] = SearchForm()
+  return render(request, "mHome.html", context)
+
 @login_required
 @transaction.atomic
 def invite(request,id):
@@ -471,9 +519,12 @@ def invite(request,id):
   p1.save()
   p2.save() 
   game.p2 = p2
-  game.save() 
-  
-  return redirect(reverse('launch'))
+  game.save()
+  context={}
+  context['form'] = SearchForm()
+  context['opponent'] = p1.user.get_username()
+  context['player'] = request.user.get_username()
+  return render(request,'game.html',context)
 
 @transaction.atomic
 @login_required
@@ -552,10 +603,19 @@ def search(request):
     errors.append("Invalid form")
     return render(request,'results.html',context)
   name = form.cleaned_data['username']
-  users = User.objects.filter(username=name)
+  users = User.objects.filter(username__startswith=name)
   if len(list(users)) == 0:
     errors.append("No match for " + name + ". But Kanye still loves Kanye.")
-  context['users'] = users
+  friends = []
+  nonfriends=[]
+  me = MyUser.objects.get(user = request.user)
+  for u in users:
+    if me.friends.filter(user=u):
+      friends.append(u)
+    else:
+      nonfriends.append(u)
+  context['friends'] = friends
+  context['nonfriends'] = nonfriends
   context['errors'] = errors
   return render(request, 'results.html', context)
 
@@ -657,4 +717,42 @@ def debuff(request):
     apply_debuff(request)#execute debuff
     return HttpResponse(jsonD,content_type='application/json')
 
+@login_required
+@transaction.atomic
+def friend(request, id):
+  context={}
+  me = MyUser.objects.get(user=request.user)
+  context['player'] = me.user.get_username()
 
+  friend = User.objects.get(id=id)
+  add = get_object_or_404(MyUser, user=friend)
+  me.friends.add(add)
+  me.save()
+  temp = me.friends.all()
+  friends = []
+  for f in list(temp):
+    friends.append(f.user)
+  context['friends'] = friends
+  context['form'] = SearchForm()
+  add.friends.add(me)
+  return render(request, "home.html", context)
+
+@login_required
+@transaction.atomic
+def unfriend(request, id):
+  context={}
+  me = MyUser.objects.get(user=request.user)
+  context['player'] = me.user.get_username()
+
+  friend = User.objects.get(id=id)
+  remove = get_object_or_404(MyUser, user=friend)
+  me.friends.remove(remove)
+  me.save()
+  temp = me.friends.all()
+  friends = []
+  for f in list(temp):
+    friends.append(f.user)
+  context['friends'] = friends
+  context['form'] = SearchForm()
+  remove.friends.remove(me)
+  return render(request, "home.html", context)
