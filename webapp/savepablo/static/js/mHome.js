@@ -85,7 +85,7 @@ function pingServer2(){
 
 
 $(document).ready(function(){
-  $('#quote').slideDown(2000);
+  $('#quote').slideDown(1500);
   if($('#inv').text() == "yes"){
     keepSearching = true; 
     $('#invite').hide();
@@ -96,6 +96,7 @@ $(document).ready(function(){
     $('#search').hide();
     $('#share').hide();
     $('#link').hide();
+    $('#quote').hide();
     pingServer2();
     //Wait for accept
   }
@@ -117,6 +118,8 @@ $(document).ready(function(){
       $('#spinner').hide()
       $('#share').hide()
       $('#link').hide()
+      $('#quote').slideDown(1500);
+
      },
     })
   });
@@ -137,6 +140,8 @@ $(document).ready(function(){
       $('#spinner').hide()
       $('#share').hide()
       $('#link').hide()
+      $('#quote').slideDown(1500);
+
      },
     })
   });
@@ -162,6 +167,8 @@ $(document).ready(function(){
       $('#share').show();
       $('#link').show();
       $('#link').html(state);
+      $('#quote').hide();
+
       pingServer2();
      },
     })
@@ -177,6 +184,8 @@ $(document).ready(function(){
     $('#spinner').show();
     $('#search').show();
     $('#wait').hide()
+    $('#quote').hide();
+
     //Find game
     pingServer();
     });
