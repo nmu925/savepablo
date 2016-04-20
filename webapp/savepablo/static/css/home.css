@@ -3,12 +3,6 @@
   border-color: #C0C0C0;
 }*/
 
-#kanye {
-  margin-left: auto;
-  margin-right:auto;
-  display:block;
-
-}
 .box{
   max-width:75%;
   max-height:75%;
@@ -32,7 +26,7 @@ figure img{
 
 }
 /* Hover code form http://codepen.io/nxworld/pen/ZYNOBZ */ 
-#store .hover figure img{
+.hover figure img{
   -webkit-transform: scale(1);
 	transform: scale(1);
 	-webkit-transition: .15s ease-in-out;
@@ -41,10 +35,21 @@ figure img{
   width:200px;
 }
 
-#store .hover figure:hover img {
+.hover figure:hover img{
 	-webkit-transform: scale(1.1);
 	transform: scale(1.1);
 }
+
+#kanye {
+  margin-left: auto;
+  margin-right:auto;
+  display:block;
+  height: auto;
+  width: auto;
+
+}
+
+
 .text{
   padding-top: 10px;
 }

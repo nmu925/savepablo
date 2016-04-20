@@ -17,11 +17,13 @@ import uuid
 import time
 from random import randint
 
+
 # Used to generate a one-time-use token to 
 from django.contrib.auth.tokens import default_token_generator
 
 #Used to send mail from within Django
 from django.core.mail import send_mail
+
 
 @login_required
 def home(request):
@@ -232,6 +234,7 @@ def bought(request):
 #multiplayer buy items handler
 @login_required
 def mbought(request):
+
   user = MyUser.objects.get(user=request.user)
   t = int(round(time.time())) - user.time
   
@@ -353,10 +356,14 @@ def mstep(request):
 #returns to multiplayer home
 @login_required
 def mHome(request):
+<<<<<<< HEAD
   context={}
   context['form'] = SearchForm()
   context['invite'] = "no"
   return render(request,'mHome.html',context)
+=======
+  return render(request,'mHome.html',{'form':SearchForm()})
+>>>>>>> 2eb3667b8a1a1a3511955441ce827e68b87510d3
 
 @login_required
 @transaction.atomic
@@ -408,13 +415,19 @@ def game(request):
     if(count == 0):
       game = Game(p1=user,p2=opp)
       game.save()
+<<<<<<< HEAD
     context['opponent'] = opp.user.get_username()
     context['player'] = request.user.get_username()
     return render(request,'game.html',context)
+=======
+
+    return render(request,'game.html',{'form':SearchForm()})
+>>>>>>> 2eb3667b8a1a1a3511955441ce827e68b87510d3
 
 #Initialize game with players
 @login_required
 def launch(request):
+<<<<<<< HEAD
   context = {}
   context['form'] = SearchForm()
   myuser = MyUser.objects.get(user=request.user)
@@ -423,6 +436,12 @@ def launch(request):
   context['opponent'] = myuser.opponent.user.get_username()
   context['player'] = request.user.get_username()
   return render(request,'game.html',context)
+=======
+    myuser = MyUser.objects.get(user=request.user)
+    if(myuser.opponent == None):
+      return HttpResponse('Invalid multiplayer game')
+    return render(request,'game.html',{'form':SearchForm()})
+>>>>>>> 2eb3667b8a1a1a3511955441ce827e68b87510d3
 
 
 @login_required
@@ -469,6 +488,7 @@ def link(request):
   #Create new game with unknown p2
   game = Game(uuid=id,p1=user,p2=None)
   game.save()
+
   link = """ http://%s%s
       """ % (request.get_host(), 
             reverse('invite', args=[id]))
@@ -518,12 +538,18 @@ def invite(request,id):
   p1.save()
   p2.save() 
   game.p2 = p2
+<<<<<<< HEAD
   game.save()
   context={}
   context['form'] = SearchForm()
   context['opponent'] = p1.user.get_username()
   context['player'] = request.user.get_username()
   return render(request,'game.html',context)
+=======
+  game.save() 
+  
+  return redirect(reverse('launch'))
+>>>>>>> 2eb3667b8a1a1a3511955441ce827e68b87510d3
 
 @transaction.atomic
 @login_required
@@ -618,10 +644,15 @@ def search(request):
   context['errors'] = errors
   return render(request, 'results.html', context)
 
+<<<<<<< HEAD
+@login_required
+def debuff(request):
+=======
 
 def apply_debuff(request):
   user = MyUser.objects.get(user=request.user)
   opp = user.opponent
+>>>>>>> 2eb3667b8a1a1a3511955441ce827e68b87510d3
   id = request.POST['id']
   if(id == 'pirate'):
     opp.canBuy = False 
@@ -717,3 +748,42 @@ def debuff(request):
     return HttpResponse(jsonD,content_type='application/json')
 
 
+@login_required
+@transaction.atomic
+def friend(request, id):
+  context={}
+  me = MyUser.objects.get(user=request.user)
+  context['player'] = me.user.get_username()
+
+  friend = User.objects.get(id=id)
+  add = get_object_or_404(MyUser, user=friend)
+  me.friends.add(add)
+  me.save()
+  temp = me.friends.all()
+  friends = []
+  for f in list(temp):
+    friends.append(f.user)
+  context['friends'] = friends
+  context['form'] = SearchForm()
+  add.friends.add(me)
+  return render(request, "home.html", context)
+
+@login_required
+@transaction.atomic
+def unfriend(request, id):
+  context={}
+  me = MyUser.objects.get(user=request.user)
+  context['player'] = me.user.get_username()
+
+  friend = User.objects.get(id=id)
+  remove = get_object_or_404(MyUser, user=friend)
+  me.friends.remove(remove)
+  me.save()
+  temp = me.friends.all()
+  friends = []
+  for f in list(temp):
+    friends.append(f.user)
+  context['friends'] = friends
+  context['form'] = SearchForm()
+  remove.friends.remove(me)
+  return render(request, "home.html", context)

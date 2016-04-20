@@ -8,7 +8,7 @@ function getCSRFToken() {
     return "unknown";
 }
 
-
+var updateID,gameID; 
 function updateMPS(num){
   var t = document.getElementById('mps'); 
   t.innerHTML = num;
@@ -38,9 +38,55 @@ function updateView(elem,count,cost){
   //update final values shown 
   oC.innerHTML = count;
   pC.innerHTML = cost;
-
+}
+//Update only cost element of an image elem, used for right column
+function updateCost(elem,cost){
+  //Get corresponding fields
+  var par = elem.parentNode.parentNode;
+  var p = par.querySelector(".text");
+  var pC = p.querySelector("#price");
+  //update final values shown 
+  pC.innerHTML = cost;
 }
 
+//Disables all clicking for 30 seconds
+function disableClicking(){
+  clearInterval(updateID);
+  clearInterval(oppID);
+  var block = document.createElement('div')
+  block.id = 'cover'
+  block.style.backgroundColor = "#ff0000";
+  block.style.bottom = '0';
+  block.style.left = '0';
+  block.style.position = 'fixed';
+  block.style.right = '0';
+  block.style.top = '0';
+  $('body').append(block);
+  $('#cover').css('opacity','0.2');
+  //reset intervals after 30 seconds
+  setTimeout(function(){
+    $('#cover').remove();
+    updateID = setInterval(updateGame,1000);
+    gameID = setInterval(getOpp,1000);
+  
+  },30000);
+}
+//Appends message to alerts
+function appendMessage(message,id){
+   var div = document.createElement('div');
+   var a = document.createElement('a');
+   var p = document.createElement('p');
+   a.innerHTML = "&times";
+   a.className = "close";
+   a.setAttribute('data-dismiss','alert');
+   a.setAttribute('aria-label','close');
+   div.className = "alert alert-danger";
+   div.appendChild(a);
+   p.innerHTML = message  
+   div.appendChild(p);
+   $(id).empty();
+   $(id).append(div);
+}
 //Sends ajax request to server, to update money every second
 function updateGame(){
     $.ajax({
@@ -52,9 +98,26 @@ function updateGame(){
     datatype:"json",
 
     success:function(state){
-        updateMoney(state['money']);
-     }
+      updateMoney(state['money']);
+      if(state['first'] == '1'){
+        $('#hold2').empty();
+        appendMessage("You lost money!","#hold2")
+      }
+      if(state['second'] == '1'){
+        $('#hold2').empty();
+        appendMessage("You lost MPS!","#hold2")
+      }
+      if(state['third'] == '1'){
+        $('#hold2').empty();
+        appendMessage("Your money got stolen!","#hold2") 
+      }
 
+     },
+    error:function(state){
+      if(state.responseText == 'canClick'){
+        disableClicking();  
+      }
+    }
     })
 }
 function getOpp(){
@@ -75,6 +138,17 @@ function getOpp(){
     })
 
 }
+function applyCooldown(cd,id){
+  console.log(cd + " " + cd);
+
+  $('#' + id).hide(100,function(){
+    $('#' + id).fadeIn(cd * 1000); 
+  }); 
+  
+
+
+
+}
 $(document).ready(function(){
 
   //Sends ajax request to remove Games with the user as a player. 
@@ -86,7 +160,7 @@ $(document).ready(function(){
       url: '/savepablo/unload',
       data:{csrfmiddlewaretoken: getCSRFToken()},
       success: function(test){
-        console.log('test worked?');
+
       } 
     })
   
@@ -109,7 +183,7 @@ $(document).ready(function(){
   });
 
   /* Handles logic when items is bought*/
-  $('.img').not('#kanye').click(function(event){
+  $('.image').not('#kanye').click(function(event){
 
     var hoverElem = event.target;
     var id = hoverElem.id;
@@ -123,6 +197,17 @@ $(document).ready(function(){
       datatype:"json", 
 
       success: function(data){
+        $('#hold').empty(); //Remove any messages
+        //Reset images to original
+        //Necesary since the images may be pirate bay from the debuff
+        var elem = document.getElementsByClassName('image');
+        if(elem[0].src.indexOf('/static/img/pirate-bay.jpg') != -1 ){
+              elem[0].src = '/static/img/yeezys.jpg'
+              elem[1].src = '/static/img/kim k.jpg'
+              elem[2].src = '/static/img/tidal.jpg'
+              elem[3].src = '/static/img/gofundme.png'
+              elem[4].src = '/static/img/mark z .jpg'
+        }
         // Not enough money to buy
         if(data.length == 0){
           console.log('not enough money')
@@ -139,10 +224,27 @@ $(document).ready(function(){
           //update final values shown 
           updateMPS(mps);
           updateMoney(money);
-          updateView(hoverElem,count,cost)
+          updateView(hoverElem,count,cost);
+        }
+       },
+        error: function(msg){
+          console.log(msg.responseText)
+          var strings = msg.responseText.split(" ");
+          console.log(strings);
+          //If error is due to debuff
+          if(strings[0] == 'debuff'){
+              //Set each picture in store to pirate
+              var elem = document.getElementsByClassName('image');
+              for(i=0; i < elem.length;i++){
+                  var e = elem[i];
+                  e.src = '/static/img/pirate-bay.jpg';
+              }
+              //Show message indicating how many seconds left off debuff
+              var mess ='You\'re items have been disabled for ' + strings[1] + ' more seconds!';
+              appendMessage(mess,'#hold'); 
+          }
 
         }
-      }
     })
   });
   /* Handles logic when debuff is bought*/
@@ -150,7 +252,10 @@ $(document).ready(function(){
 
     var hoverElem = event.target;
     var id = hoverElem.id;
-
+    //Prevent clicking on image while on cooldown
+    if($('#'+id).is(':animated')){
+      return; 
+    }
     $.ajax({
       url: "/savepablo/debuff",
       
@@ -160,12 +265,27 @@ $(document).ready(function(){
       datatype:"json", 
 
       success: function(data){
-          console.log(data);
+          if(data.length == 0){
+            console.log("not enough money");
+            console.log(id);
+          }
+          else{
+          //Parse data from json
+          var cost = data['cost'];
+          var money = data['money'];
+          var cd = data['cd'];
+          //find correct element to modify 
+          var hoverElem = event.target;
+          //update final values shown 
+          updateMoney(money);
+          updateCost(hoverElem,cost);
+          applyCooldown(cd,id)
+          }
         }
       })
     })
 
 });
 //Temporary interval times for now, may need to decrease time
-setInterval(updateGame,1000);
-setInterval(getOpp,1000);
+updateID = setInterval(updateGame,1000);
+oppID = setInterval(getOpp,1000);

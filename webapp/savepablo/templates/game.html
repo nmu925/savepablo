@@ -5,7 +5,14 @@
 <script src="{% static 'js/game.js' %}"></script>
 
 {% endblock %}
-
+{% block alerts %}
+<div id="hold">
+</div>
+{% endblock %}
+{% block alerts2 %}
+<div id="hold2">
+</div>
+{% endblock %}
 {% block thirdcol %}
 <h1><small>vs. {{opponent}}</small></h1>
 <div class="col-md-4 container-fluid" id="store">
@@ -17,9 +24,9 @@
         <figure class="box">
           <img id="pirate" class="debuff" src="{% static 'img/pirate-bay.jpg' %}"/>
         </figure>
-        <p class="text"> Owned: <span id="owned" >0 </span> 
-                                <span>Price: </span>
-                                <span id="price">10</span>
+        <p class="text">
+            <span>Price: </span>
+            <span id="price">100</span>
         </p>
 
       </div>
@@ -28,9 +35,9 @@
         <figure class="box">
           <img class="debuff" id="first" src="{% static 'img/pastelle.jpg' %}"/>
         </figure>
-        <p class="text"> Owned: <span id="owned" >0 </span> 
-                                <span>Price: </span>
-                                <span id="price">10</span>
+        <p class="text">        
+              <span>Price: </span>
+              <span id="price">1000</span>
         </p>
       </div>
      <div class="hover row">
@@ -38,9 +45,9 @@
         <figure class="box">
           <img class="debuff" id="second" src="{% static 'img/good.jpg' %}"/>
         </figure>
-        <p class="text"> Owned: <span id="owned" >0 </span> 
-                                <span>Price: </span>
-                                <span id="price">100</span>
+        <p class="text">                                 
+            <span>Price: </span>
+            <span id="price">10000</span>
         </p>
       </div>
       <div class="hover row">
@@ -48,9 +55,9 @@
         <figure class="box">
           <img class="debuff" id="third" src="{% static 'img/third.jpg' %}"/>
         </figure>
-          <p class="text"> Owned: <span id="owned" >0 </span> 
-                                  <span>Price: </span>
-                                  <span id="price">1000</span>
+          <p class="text"> 
+             <span>Price: </span>
+             <span id="price">100000</span>
         </p>
       </div>
       <div class="hover row">
@@ -58,9 +65,9 @@
         <figure class="box">
           <img class="debuff" id="stop" src="{% static 'img/sign.png' %}"/>
         </figure>
-        <p class="text"> Owned: <span id="owned" >0 </span> 
-                                <span>Price: </span>
-                                <span id="price">10000</span>
+        <p class="text"> 
+           <span>Price: </span>
+           <span id="price">100000</span>
      </div>
 
 {% endblock %}

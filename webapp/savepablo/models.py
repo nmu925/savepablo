@@ -13,6 +13,16 @@ class MyUser(models.Model):
   ready = models.BooleanField(default=0)
   mPoints = models.DecimalField(max_digits=11,decimal_places=0, default=0)
   mMps = models.DecimalField(max_digits=100,decimal_places=1,default=1)
+  canBuy = models.BooleanField(default=1)
+  time = models.IntegerField(default=0)
+  canClick = models.BooleanField(default=1)
+  timeClick = models.IntegerField(default=0)
+  first = models.BooleanField(default = 0)
+  second = models.BooleanField(default = 0)
+  third = models.BooleanField(default = 0)
+
+
+
 
   #queued by default returns an integer value, easier to convert to a bool 
   def is_queued(self):
@@ -57,5 +67,9 @@ class Game(models.Model):
   p1 = models.OneToOneField(MyUser,related_name='+',default = None,null=True)
   p2 = models.OneToOneField(MyUser,related_name='+',default = None,null=True)
 
-
+class Debuff(models.Model):
+  name = models.CharField(max_length = 20)
+  cost = models.DecimalField(max_digits=100,decimal_places=1,default=0)
+  user = models.ForeignKey(User)
+  time = models.IntegerField(default = 0) 
 
