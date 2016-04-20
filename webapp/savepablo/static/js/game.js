@@ -136,7 +136,6 @@ function getOpp(){
         mps = fields['mMps']
         fields1 = state[1]['fields']
         username = fields1['username']
-        //set_username(username)
         set_oMps(mps)
         set_oMoney(money)
      }

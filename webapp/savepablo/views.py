@@ -638,15 +638,15 @@ def apply_debuff(request):
     rand = randint(1,10)
     if rand <= 8:
       opp.third = True
-      stole = opp.mPoints * Decimal(.2)
-      opp.mPoints *= Decimal(.8)
+      stole = opp.mPoints * Decimal(.35)
+      opp.mPoints *= Decimal(.65)
       user.mPoints += stole
       opp.save()
       user.save()
     else:
       user.third = True
-      stole = user.mPoints * Decimal(.2)
-      user.mPoints *= Decimal(.8)
+      stole = user.mPoints * Decimal(.35)
+      user.mPoints *= Decimal(.65)
       opp.mPoints += stole
       opp.save()
       user.save()

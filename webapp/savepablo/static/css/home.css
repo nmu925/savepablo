@@ -63,3 +63,24 @@ html{
     overflow:hidden;
 }
 
+figure{
+  position:relative;
+}
+
+figure figcaption  {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left:0;
+  right:0;
+  top:0;
+  width:70%;
+  padding: 20px;
+  background-color: #0BC7B4;
+  opacity: .9;
+}
+
+figure:hover figcaption {
+  display:block
+}
+
