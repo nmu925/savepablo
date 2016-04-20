@@ -6,3 +6,6 @@
 
 # SQLite database file
 db.sqlite3
+
+# Secret config parameters
+*.ini

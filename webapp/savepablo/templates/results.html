@@ -2,8 +2,17 @@
 
 {% block content %}
 <h1 class="header">Fam</h1>
-{% for user in users %}
-	<a href="#">{{user.username}}</a>
+{% for user in friends %}
+<div>
+	<a href="{% url 'link2' user.id %}">{{user.username}}</a>
+	<a href="{% url 'unfriend' user.id %}" class="btn btn-warning" type="submit" value="Unfriend">Unfriend</a>
+</div>
+{% endfor %}
+{% for user in nonfriends %}
+<div>
+	<a href="{% url 'link2' user.id %}">{{user.username}}</a>
+	<a href="{% url 'friend' user.id %}" class="btn btn-primary" type="submit" value="Friend">Friend</a>
+</div>
 {% endfor %}
 
 {% for error in errors %}

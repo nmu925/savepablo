@@ -13,6 +13,7 @@ class RegistrationForm(forms.Form):
   password2 = forms.CharField(max_length=200,
                              label='Confirm Password',
                               widget = forms.PasswordInput())
+  email = forms.EmailField()
 
   def clean(self):
     cleaned_data = super(RegistrationForm,self).clean()

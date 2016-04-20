@@ -27,9 +27,9 @@ class MyUser(models.Model):
 
 class Item(models.Model):
   name = models.CharField(max_length = 20)
-  mps = models.DecimalField(max_digits=100,decimal_places=1,default=0)
+  mps = models.DecimalField(max_digits=100,decimal_places=2,default=0)
   count = models.IntegerField()
-  cost = models.DecimalField(max_digits=100,decimal_places=1,default=0)
+  cost = models.DecimalField(max_digits=100,decimal_places=2,default=0)
   user = models.ForeignKey(User)
 
   def __unicode__(self):
@@ -40,9 +40,9 @@ class Item(models.Model):
 
 class mItem(models.Model):
   name = models.CharField(max_length = 20)
-  mps = models.DecimalField(max_digits=100,decimal_places=1,default=0)
+  mps = models.DecimalField(max_digits=100,decimal_places=2,default=0)
   count = models.IntegerField()
-  cost = models.DecimalField(max_digits=100,decimal_places=1,default=0)
+  cost = models.DecimalField(max_digits=100,decimal_places=2,default=0)
   user = models.ForeignKey(User)
 
   def __unicode__(self):

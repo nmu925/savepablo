@@ -40,11 +40,6 @@ function updateLeaderboard() {
       $("ol#board").empty();
       for(var i = 0; i < state.players.length; i++){
         var t = state.players[i];
-        // var temp = t['fields'];
-        // var user = temp['user'];
-        // console.log(user);
-        // var temp2 = user['fields']
-        // var username = temp2['username']
         $("ol#board").append("<li>"+t+"</li>");
       }
     },

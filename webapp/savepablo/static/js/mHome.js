@@ -85,6 +85,22 @@ function pingServer2(){
 
 
 $(document).ready(function(){
+  $('#invite').hide();
+  if($('#invite').text() == "yes"){
+    keepSearching = true; 
+    $('#game').hide();
+    $('#invite').hide();
+    $('#cancel2').show();
+    $('#spinner').show();
+    $('#wait').show();
+    $('#search').hide();
+    $('#share').hide();
+    $('#link').hide();
+    $('#invite').hide();
+    pingServer2();
+    //Wait for accept
+  }
+
   $('#cancel').click(function(event){
     $.ajax({
     url: "/savepablo/cancel",
@@ -102,6 +118,7 @@ $(document).ready(function(){
       $('#spinner').hide()
       $('#share').hide()
       $('#link').hide()
+      $('#invite').hide();
      },
     })
   });
@@ -122,6 +139,7 @@ $(document).ready(function(){
       $('#spinner').hide()
       $('#share').hide()
       $('#link').hide()
+      $('#invite').hide();
      },
     })
   });
@@ -147,6 +165,7 @@ $(document).ready(function(){
       $('#share').show();
       $('#link').show();
       $('#link').html(state);
+      $('#invite').hide();
       pingServer2();
      },
     })
@@ -162,7 +181,7 @@ $(document).ready(function(){
     $('#spinner').show();
     $('#search').show();
     $('#wait').hide()
-
+    $('#invite').hide();
     //Find game
     pingServer();
     });
