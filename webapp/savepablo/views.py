@@ -716,4 +716,42 @@ def debuff(request):
     apply_debuff(request)#execute debuff
     return HttpResponse(jsonD,content_type='application/json')
 
+@login_required
+@transaction.atomic
+def friend(request, id):
+  context={}
+  me = MyUser.objects.get(user=request.user)
+  context['player'] = me.user.get_username()
 
+  friend = User.objects.get(id=id)
+  add = get_object_or_404(MyUser, user=friend)
+  me.friends.add(add)
+  me.save()
+  temp = me.friends.all()
+  friends = []
+  for f in list(temp):
+    friends.append(f.user)
+  context['friends'] = friends
+  context['form'] = SearchForm()
+  add.friends.add(me)
+  return render(request, "home.html", context)
+
+@login_required
+@transaction.atomic
+def unfriend(request, id):
+  context={}
+  me = MyUser.objects.get(user=request.user)
+  context['player'] = me.user.get_username()
+
+  friend = User.objects.get(id=id)
+  remove = get_object_or_404(MyUser, user=friend)
+  me.friends.remove(remove)
+  me.save()
+  temp = me.friends.all()
+  friends = []
+  for f in list(temp):
+    friends.append(f.user)
+  context['friends'] = friends
+  context['form'] = SearchForm()
+  remove.friends.remove(me)
+  return render(request, "home.html", context)
