@@ -772,3 +772,9 @@ def congrats(request):
   context = {}
   context['player'] = request.user.get_username()
   return render(request, "celebration.html", context)
+
+@login_required
+def lose(request):
+  context={}
+  context['player'] = request.user.get_username()
+  return render(request, "lose.html", context)
