@@ -26,7 +26,10 @@ function set_oMoney(num){
   var t = document.getElementById('oMoney');
   t.innerHTML = num;
 } 
-
+function set_username(name){
+  var t = document.getElementById('small');
+  t.innerHTML = name;
+}
 
 //Updates count,cost elements of an image elem
 function updateView(elem,count,cost){
@@ -131,6 +134,9 @@ function getOpp(){
         fields = state[0]['fields']
         money = fields['mPoints']
         mps = fields['mMps']
+        fields1 = state[1]['fields']
+        username = fields1['username']
+        //set_username(username)
         set_oMps(mps)
         set_oMoney(money)
      }
