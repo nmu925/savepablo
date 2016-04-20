@@ -7,12 +7,13 @@
 {% endblock %}
 {% block content %}
 {% load staticfiles %}
-<h1><small>Welcome to Heartbreak, {{player}}</small></h1>
 <div class="container-fluid">
   <div class="row-fluid">
     <div class="col-md-4" id = "store">
+    <h1><small>Welcome to Heartbreak, {{player}}</small></h1>
       {% block alerts %}
       {% endblock %}
+
       <h1 class="header"> Store </h1>
       <div class="hover row">
         <h3 class="count"> Sell overpriced Yeezys</h3>
