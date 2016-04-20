@@ -13,13 +13,13 @@ var updateID,gameID;
 //Credit to http://stackoverflow.com/questions/9461621/how-to-format-a-number-as-2-5k-if-a-thousand-or-more-otherwise-900-in-javascrip
 function nFormatter(num) {
      if (num >= 1000000000) {
-        return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+        return (num / 1000000000).toFixed(2).replace(/\.0$/, '') + 'B';
      }
      if (num >= 1000000) {
-        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+        return (num / 1000000).toFixed(2).replace(/\.0$/, '') + 'M';
      }
      if (num >= 1000) {
-        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+        return (num / 1000).toFixed(2).replace(/\.0$/, '') + 'K';
      }
      return num;
 }
@@ -153,10 +153,16 @@ function getOpp(){
         username = fields1['username']
         set_oMps(mps)
         set_oMoney(money)
-     }
+     },
+    error:function(state){
+      if(state.responseText == 'disconnect'){
+        clearInterval(updateID);
+        clearInterval(oppID);
+        alert('Opponent disconnected!'); 
+      }      
+    }
 
     })
-
 }
 function applyCooldown(cd,id){
   console.log(cd + " " + cd);
@@ -231,6 +237,7 @@ $(document).ready(function(){
         // Not enough money to buy
         if(data.length == 0){
           console.log('not enough money')
+          alert('Not enough money');
         }
         //Update frontend to match server data
         else{
@@ -287,6 +294,7 @@ $(document).ready(function(){
       success: function(data){
           if(data.length == 0){
             console.log("not enough money");
+            alert("Not enough money");
             console.log(id);
           }
           else{

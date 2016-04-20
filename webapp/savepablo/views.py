@@ -25,13 +25,25 @@ from django.core.mail import send_mail
 
 @login_required
 def home(request):
+
   #Set opponent to null
   #Used as a soft reset in case the opponent is not reset at end of multiplayer game
   context = {}
   user = MyUser.objects.get(user=request.user)
   user.opponent = None
   user.queued = False
+  user.mPoints = 0;
+  user.mMps = 1; 
   user.save()
+ #delete any existing games that the user is in,although the user should not be inany eixsting games
+  filt = Game.objects.filter(p1=user)
+  filt2 = Game.objects.filter(p2=user)
+  if filt.exists():
+    for f in filt:
+      f.delete()
+  if filt2.exists():
+    for f in filt2:
+      f.delete()
 
   context['player'] = user.user.get_username()
 
@@ -149,26 +161,31 @@ def getMPS(item):
 #Defines the initial cost to buy each item
 def getCost(item):
   if(item == 'yeezy'):
-    return 1
-  if(item == 'kim'):
-    return 10
-  if(item == 'tidal'):
     return 100
-  if(item == 'gfm'):
+  if(item == 'kim'):
     return 1000
-  if(item == 'mark'):
+  if(item == 'tidal'):
     return 10000
+  if(item == 'gfm'):
+    return 100000
+  if(item == 'mark'):
+    return 1000000
 #definines the initial cost to buy each debuff
 def getDebuffCost(item):
   if(item == 'pirate'):
+    #return 100
     return 10
   if(item == 'first'):
+    #return 100
     return 10
   if(item == 'second'):
+    #return 100
     return 10
   if(item == 'third'):
+    #return 150
     return 10
   if(item == 'stop'):
+    #return 500
     return 10
 
 #defins the cooldowns for each debuff
@@ -204,7 +221,7 @@ def bought(request):
 
     owned.count += 1
     ogCost = owned.cost
-    owned.cost = owned.cost * Decimal(1.5) 
+    owned.cost = owned.cost * Decimal(1.2) 
     owned.save()
     #update user mps
     user.points = user.points - ogCost
@@ -225,7 +242,7 @@ def bought(request):
     ogCost = getCost(id)
     costNew = ogCost * 1.5
     #check if item can be bought
-    if not(costNew <= user.points):
+    if not(ogCost <= user.points):
       return HttpResponse()
     new = Item(name=id,mps=mpsNew,count=1,cost=costNew,user=request.user)
     new.save()
@@ -271,7 +288,7 @@ def mbought(request):
 
     owned.count += 1
     ogCost = owned.cost
-    owned.cost = owned.cost * Decimal(1.5) 
+    owned.cost = owned.cost * Decimal(1.2) 
     owned.save()
     #update user mps
     user.mPoints = user.mPoints - ogCost
@@ -447,6 +464,9 @@ def launch(request):
 def getopp(request):
   user = MyUser.objects.get(user=request.user)
   opp = user.opponent
+  if(opp == None):
+    return HttpResponseBadRequest("disconnect")
+
   qset = list(MyUser.objects.filter(user = opp.user))
   qset.append(opp.user)
   data = serializers.serialize('json',qset)
@@ -696,7 +716,7 @@ def debuff(request):
       return HttpResponse()
 
     ogCost = owned.cost
-    owned.cost = owned.cost * Decimal(1.5)
+    owned.cost = owned.cost * Decimal(5.0)
     owned.time = t
     owned.save()
     #update user mps

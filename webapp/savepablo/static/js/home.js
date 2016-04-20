@@ -11,15 +11,15 @@ function getCSRFToken() {
 //Credit to http://stackoverflow.com/questions/9461621/how-to-format-a-number-as-2-5k-if-a-thousand-or-more-otherwise-900-in-javascrip
 function nFormatter(num) {
      if (num >= 1000000000) {
-        return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+        return (num / 1000000000).toFixed(2).replace(/\.0$/, '') + 'B';
      }
      if (num >= 1000000) {
-        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+        return (num / 1000000).toFixed(2).replace(/\.0$/, '') + 'M';
      }
      if (num >= 1000) {
-        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+        return (num / 1000).toFixed(2).replace(/\.0$/, '') + 'K';
      }
-     return num;
+     return (num/1).toFixed(2);
 }
 function updateMPS(num){
   var t = document.getElementById('mps'); 
@@ -77,12 +77,12 @@ function updateFam() {
         var id = state.ids[i];
 
         var outsideDiv = document.createElement('div');
-        outsideDiv.style='padding-bottom: 10px';
+        outsideDiv.style.paddingBottom = '10px';
 
         var div=document.createElement('div');
-        div.class = "btn-group btn-group-xs";
+        div.className = "btn-group btn-group-xs";
         div.role='group';
-        div.style='padding-left:60px';
+        div.style.paddingLeft = '60px';
 
         var a = document.createElement('a');
         a.href = "/savepablo/link2/id"
@@ -90,7 +90,7 @@ function updateFam() {
 
         var button = document.createElement('a');
         button.href = "/savepablo/unfriend/"+id
-        button.class ="btn btn-primary btn-lg active";
+        button.className ="btn btn-warning btn-lg active";
         button.innerHTML = "Unfriend";
 
         div.appendChild(button);
@@ -224,4 +224,4 @@ $(document).ready(function(){
 
 setInterval(updateGame,1000)
 setInterval(updateLeaderboard, 1000)
-setInterval(updateFam, 2000)
+setInterval(updateFam, 5000)
