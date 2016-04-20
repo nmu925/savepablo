@@ -411,6 +411,7 @@ def getopp(request):
   user = MyUser.objects.get(user=request.user)
   opp = user.opponent
   qset = list(MyUser.objects.filter(user = opp.user))
+  qset.append(opp.user)
   data = serializers.serialize('json',qset)
   return HttpResponse(data,content_type='application/json')
 
