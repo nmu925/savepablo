@@ -1,20 +1,43 @@
 {% extends 'navbar.html' %}
 
 {% block content %}
-<h1 class="header">Fam</h1>
-{% for user in friends %}
-<div>
-	<a href="{% url 'link2' user.id %}">{{user.username}}</a>
-	<a href="{% url 'unfriend' user.id %}" class="btn btn-warning" type="submit" value="Unfriend">Unfriend</a>
+<div class="container">
+  <h2><small>Results</small></h2>
+  <table class="table">
+    <thead>
+      <tr>
+	      <th></th>
+	      <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for user in friends %}
+      <tr>
+      <td>
+		<a href="{% url 'link2' user.id %}">{{user.username}}</a>
+	  </td>
+	  {% if user.username != me %}
+	  <td>
+		<a href="{% url 'unfriend' user.id %}" class="btn btn-warning" type="submit" value="Unfriend">Unfriend</a>
+	  </td>
+	  {% endif %}
+	  </tr>
+	{% endfor %}
+    {% for user in nonfriends %}
+    <tr>
+	<td>
+		<a href="{% url 'link2' user.id %}">{{user.username}}</a> 
+	</td>
+	{% if user.username != me %}
+	<td>
+		<a href="{% url 'friend' user.id %}" class="btn btn-primary" type="submit" value="Friend">Friend</a>
+	</td>
+	{% endif %}
+	</tr>
+	{% endfor %}
+    </tbody>
+  </table>
 </div>
-{% endfor %}
-{% for user in nonfriends %}
-<div>
-	<a href="{% url 'link2' user.id %}">{{user.username}}</a>
-	<a href="{% url 'friend' user.id %}" class="btn btn-primary" type="submit" value="Friend">Friend</a>
-</div>
-{% endfor %}
-
 {% for error in errors %}
     <p style="color: red">
     {{ error }}

@@ -613,6 +613,7 @@ def search(request):
   context['friends'] = friends
   context['nonfriends'] = nonfriends
   context['errors'] = errors
+  context['me'] = request.user.get_username()
   return render(request, 'results.html', context)
 
 
