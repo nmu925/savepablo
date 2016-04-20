@@ -327,12 +327,7 @@ def step(request):
   user.points += user.mps
   user.save()
   data = {}
-  b = user.points >= 53000000 and (not user.won)
-  if b:
-    user.won = True
-    user.save()
   data['money'] = str(user.points)
-  data['won'] = str(b)
   return HttpResponse(json.dumps(data),content_type='application/json')
 
 #increments points by mps for multi-player
@@ -777,12 +772,9 @@ def congrats(request):
   context = {}
   context['player'] = request.user.get_username()
   return render(request, "celebration.html", context)
-<<<<<<< HEAD
 
 @login_required
 def lose(request):
   context={}
   context['player'] = request.user.get_username()
   return render(request, "lose.html", context)
-=======
->>>>>>> f4c090ac70147c17b3a8287b60e42cd2ab31bf66

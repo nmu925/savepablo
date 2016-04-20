@@ -7,18 +7,28 @@ function getCSRFToken() {
     }
     return "unknown";
 }
+
+//Credit to http://stackoverflow.com/questions/9461621/how-to-format-a-number-as-2-5k-if-a-thousand-or-more-otherwise-900-in-javascrip
+function nFormatter(num) {
+     if (num >= 1000000000) {
+        return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'B';
+     }
+     if (num >= 1000000) {
+        return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+     }
+     if (num >= 1000) {
+        return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+     }
+     return num;
+}
 function updateMPS(num){
   var t = document.getElementById('mps'); 
-  t.innerHTML = num;
+  t.innerHTML = nFormatter(num);
 }
 function updateMoney(num){
   var t = document.getElementById('money');
-  t.innerHTML = num;
+  t.innerHTML = nFormatter(num);
 
-  //reached $53 million!
-  if(num >= 53000000) {
-    window.location.replace("/savepablo/congrats");
-  }
 } 
 
 //Updates count,cost elements of an image elem
@@ -29,8 +39,8 @@ function updateView(elem,count,cost){
   var oC = p.querySelector("#owned");
   var pC = p.querySelector("#price");
   //update final values shown 
-  oC.innerHTML = count;
-  pC.innerHTML = cost;
+  oC.innerHTML = nFormatter(count);
+  pC.innerHTML = nFormatter(cost);
 
 }
 
@@ -106,7 +116,11 @@ function updateGame(){
     datatype:"json",
 
     success:function(state){
-        updateMoney(state['money']);
+      if(state['won'] == 'True' && won < 1){
+         window.location.replace("/savepablo/congrats");
+      }
+
+      updateMoney(state['money']);
      }
 
     });
