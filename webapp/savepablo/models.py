@@ -67,6 +67,8 @@ class Game(models.Model):
   uuid = models.CharField(max_length = 50,default='0')
   p1 = models.OneToOneField(MyUser,related_name='+',default = None,null=True)
   p2 = models.OneToOneField(MyUser,related_name='+',default = None,null=True)
+  def __unicdoe__(self):
+    return str(self.p1) + '-' + str(self.p2)
 
 class Debuff(models.Model):
   name = models.CharField(max_length = 20)

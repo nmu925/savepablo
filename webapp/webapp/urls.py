@@ -19,5 +19,6 @@ from savepablo import views
 
 urlpatterns = [
     url(r'^savepablo/',include('savepablo.urls')),
+    url(r'^admin/', admin.site.urls),
     url(r'^$', views.home),
 ]

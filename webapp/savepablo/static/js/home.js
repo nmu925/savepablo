@@ -116,7 +116,7 @@ function updateGame(){
     datatype:"json",
 
     success:function(state){
-      if(state['won'] == 'True' && won < 1){
+      if(state['won'] == 'True'){
          window.location.replace("/savepablo/congrats");
       }
 

@@ -21,7 +21,7 @@ function nFormatter(num) {
      if (num >= 1000) {
         return (num / 1000).toFixed(2).replace(/\.0$/, '') + 'K';
      }
-     return num;
+     return (num/1).toFixed(2);
 }
 function updateMPS(num){
   var t = document.getElementById('mps'); 
