@@ -280,7 +280,7 @@ $(document).ready(function(){
                   e.src = '/static/img/pirate-bay.jpg';
               }
               //Show message indicating how many seconds left off debuff
-              var mess ='You\'re items have been disabled for ' + strings[1] + ' more seconds!';
+              var mess ='Your items have been disabled for ' + strings[1] + ' more seconds!';
               appendMessage(mess,'#hold'); 
           }
 

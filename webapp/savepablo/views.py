@@ -174,22 +174,17 @@ def getCost(item):
 #definines the initial cost to buy each debuff
 def getDebuffCost(item):
   if(item == 'pirate'):
-    #return 100
-    return 10
+    return 100
   if(item == 'first'):
-    #return 100
-    return 10
+    return 100
   if(item == 'second'):
-    #return 100
-    return 10
+    return 100
   if(item == 'third'):
-    #return 150
-    return 10
+    return 150
   if(item == 'stop'):
-    #return 500
-    return 10
+    return 500
 
-#defins the cooldowns for each debuff
+#defines the cooldowns for each debuff
 def getCooldown(item):
   if(item == 'pirate'):
     return 20
