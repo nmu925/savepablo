@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 class MyUser(models.Model):
   user = models.OneToOneField(User)
-  points = models.DecimalField(max_digits=11,decimal_places=0, default=0)
+  points = models.DecimalField(max_digits=19,decimal_places=0, default=0)
   friends = models.ManyToManyField("self",symmetrical=True)
   mps = models.DecimalField(max_digits=50,decimal_places=1,default=1)
   queued = models.BooleanField(default=0)
